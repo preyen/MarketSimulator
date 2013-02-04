@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MarketSimulator.Contracts;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin.Hosting;
 using Owin;
 
@@ -12,12 +14,19 @@ namespace MarketSimulator.CommunicationsModule
 {
     public class SignalRCommunicationsHandler : IDataCommunicationsModule, IOrderCommunicationsModule
     {
-        public SignalRCommunicationsHandler(string hostURL)
+        private readonly static Lazy<SignalRCommunicationsHandler> _instance = new Lazy<SignalRCommunicationsHandler>(() => new SignalRCommunicationsHandler());
+        private readonly Lazy<IHubConnectionContext> _clientsInstance = new Lazy<IHubConnectionContext>(() => GlobalHost.ConnectionManager.GetHubContext<MarketCommunications>().Clients);
+
+        public static SignalRCommunicationsHandler Instance {get {return _instance.Value;}}
+
+        public ConcurrentDictionary<string,string> ConnectionIDs = new ConcurrentDictionary<string,string>();
+        public List<string> DataListeners = new List<string>();
+
+        public SignalRCommunicationsHandler()
         {
-            using (WebApplication.Start<Startup>(hostURL))
+            using (var wa = WebApplication.Start<Startup>())
             {
-                Console.WriteLine("Server running on {0}", hostURL);
-                Console.ReadLine();
+                Console.WriteLine("Server running on {0}", "unknown");
             }
 
         }
@@ -33,19 +42,31 @@ namespace MarketSimulator.CommunicationsModule
 
         public bool PushUpdate(ILimitOrderBook limitOrderBook)
         {
-            throw new NotImplementedException();
+            var dataConnections = ConnectionIDs.Where(c => DataListeners.Contains(c.Key)).Select(c => c.Value);
+
+            foreach (var connID in dataConnections)
+            {
+                _clientsInstance.Value.Client(connID).Update(limitOrderBook);
+            }
+
+            return true;
         }
 
         public event ProcessOrderHandler OnOrder;
 
         public bool ProcessOrderInstruction(Order order, string userID)
         {
-            throw new NotImplementedException();
+            OnOrder(order, userID);
+            return true;
         }
 
         public bool PushOrderInstructionUpdate(OrderUpdate order, string userID)
         {
-            throw new NotImplementedException();
+            var connID = ConnectionIDs[userID];
+            _clientsInstance.Value.Client(connID).Update(order);
+            
+
+            return true;
         }
     }
 
@@ -57,11 +78,39 @@ namespace MarketSimulator.CommunicationsModule
         }
     }
 
-    public class MyHub : Hub
+    public class MarketCommunications : Hub
     {
-        public void Send(ILimitOrderBook limitOrderBook)
+        SignalRCommunicationsHandler _commsHandler;
+
+        public MarketCommunications() : this(SignalRCommunicationsHandler.Instance) { }
+
+        public MarketCommunications(SignalRCommunicationsHandler commsHandler)
         {
-            Clients.All.UpdateOrderBook(limitOrderBook);
+            _commsHandler = commsHandler;
+        }
+        public bool ProcessOrderInstruction(Order order, string userID)
+        {
+            RegisterUserID(userID, Clients.Caller.ConnectionID);
+            return _commsHandler.ProcessOrderInstruction(order,userID);
+        }
+        public bool SubscribeToDataFeed(string userID)
+        {
+            RegisterUserID(userID, Clients.Caller.ConnectionID);
+            if (!_commsHandler.DataListeners.Contains(userID))
+            _commsHandler.DataListeners.Add(userID);
+            return true;
+        }
+
+        public bool UnsubscribeFromDataFeed(string userID)
+        {
+            if (_commsHandler.DataListeners.Contains(userID))
+                _commsHandler.DataListeners.Remove(userID);
+            return true;
+        }
+
+        private void RegisterUserID(string userID, string connectionID) 
+        {
+            _commsHandler.ConnectionIDs.AddOrUpdate(userID,connectionID,(oldValue,newValue) => newValue);
         }
     }
 

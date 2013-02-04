@@ -16,7 +16,6 @@ namespace MarketSimulator.Contracts
 
     public interface IOrderCommunicationsModule
     {      
-
        event ProcessOrderHandler OnOrder;
 
        bool ProcessOrderInstruction(Order order, string userID);
