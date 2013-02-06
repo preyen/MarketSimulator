@@ -24,9 +24,10 @@ namespace MarketSimulator.CommunicationsModule
 
         public SignalRCommunicationsHandler()
         {
-            using (var wa = WebApplication.Start<Startup>())
+            using (var wa = WebApplication.Start<Startup>(@"http://Preyen-PC:8088"))
             {
                 Console.WriteLine("Server running on {0}", "unknown");
+               
             }
 
         }
@@ -73,7 +74,7 @@ namespace MarketSimulator.CommunicationsModule
     class Startup
     {
         public void Configuration(IAppBuilder app)
-        {            
+        {
             app.MapHubs();
         }
     }
@@ -111,6 +112,11 @@ namespace MarketSimulator.CommunicationsModule
         private void RegisterUserID(string userID, string connectionID) 
         {
             _commsHandler.ConnectionIDs.AddOrUpdate(userID,connectionID,(oldValue,newValue) => newValue);
+        }
+
+        public void Ping()
+        {
+            Clients.Caller.Pong("hello!");
         }
     }
 

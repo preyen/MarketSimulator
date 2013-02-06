@@ -6,7 +6,7 @@ using MarketSimulator.Contracts;
 
 namespace MarketSimulator
 {
-    class Simulator
+    public class Simulator
     {
         private ILimitOrderBook _limitOrderBook;
         private IDataCommunicationsModule _dataCommunicationsModule;
