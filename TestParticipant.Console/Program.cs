@@ -12,14 +12,16 @@ namespace TestParticipant.Console
     {
         static void Main(string[] args)
         {
-            var connection = new HubConnection(@"http://Preyen-PC:8088/");
-            var hub = connection.CreateHubProxy("MarketCommunications");
+            var connection = new HubConnection(@"http://localhost:8080/signalr");
+            var hub = connection.CreateHubProxy("market");
             connection.Start().Wait();
-            
 
-            hub.On("Pong", s => System.Console.WriteLine(s));
+            System.Console.WriteLine("Connected");
+            hub.On("pong", () => { System.Console.WriteLine("Pong called"); });
 
-            hub.Invoke("Ping");
+            var r = hub.Invoke<bool>("SubscribeToDataFeed","test1").Result;
+
+            System.Console.WriteLine(r);
 
             System.Console.ReadKey();
         }

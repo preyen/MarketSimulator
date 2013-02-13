@@ -15,7 +15,7 @@ namespace MarketSimulator.CommunicationsModule
     public class SignalRCommunicationsHandler : IDataCommunicationsModule, IOrderCommunicationsModule
     {
         private readonly static Lazy<SignalRCommunicationsHandler> _instance = new Lazy<SignalRCommunicationsHandler>(() => new SignalRCommunicationsHandler());
-        private readonly Lazy<IHubConnectionContext> _clientsInstance = new Lazy<IHubConnectionContext>(() => GlobalHost.ConnectionManager.GetHubContext<MarketCommunications>().Clients);
+        private readonly Lazy<IHubConnectionContext> _clientsInstance = new Lazy<IHubConnectionContext>(() => GlobalHost.ConnectionManager.GetHubContext<Market>().Clients);
 
         public static SignalRCommunicationsHandler Instance {get {return _instance.Value;}}
 
@@ -24,13 +24,11 @@ namespace MarketSimulator.CommunicationsModule
 
         public SignalRCommunicationsHandler()
         {
-            using (var wa = WebApplication.Start<Startup>(@"http://Preyen-PC:8088"))
-            {
-                Console.WriteLine("Server running on {0}", "unknown");
-               
-            }
+            WebApplication.Start<Startup>(@"http://localhost:8080");
 
+            Console.WriteLine("Server running on {0}", "unknown");
         }
+
         public bool SubscribeToDataFeed(string userID)
         {
             throw new NotImplementedException();
@@ -75,17 +73,17 @@ namespace MarketSimulator.CommunicationsModule
     {
         public void Configuration(IAppBuilder app)
         {
-            app.MapHubs();
+            app.MapHubs();            
         }
     }
 
-    public class MarketCommunications : Hub
+    public class Market : Hub
     {
         SignalRCommunicationsHandler _commsHandler;
 
-        public MarketCommunications() : this(SignalRCommunicationsHandler.Instance) { }
+        public Market() : this(SignalRCommunicationsHandler.Instance) { }
 
-        public MarketCommunications(SignalRCommunicationsHandler commsHandler)
+        public Market(SignalRCommunicationsHandler commsHandler)
         {
             _commsHandler = commsHandler;
         }
@@ -116,7 +114,8 @@ namespace MarketSimulator.CommunicationsModule
 
         public void Ping()
         {
-            Clients.Caller.Pong("hello!");
+            Console.WriteLine("Ping called");
+            Clients.All.pong();
         }
     }
 
