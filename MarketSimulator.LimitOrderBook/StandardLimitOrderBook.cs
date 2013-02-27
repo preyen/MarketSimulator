@@ -98,7 +98,74 @@ namespace MarketSimulator.LimitOrderBook
 
         public IEnumerable<OrderUpdate> AmendLimitOrder(Order order)
         {
-            throw new NotImplementedException();
+            return AmendLimitOrder(order, false);
+        }
+
+        public IEnumerable<OrderUpdate> AmendLimitOrder(Order order,bool cancel)
+        {
+            var amended = false;
+
+            foreach (var bidGroup in Bids.Values)
+            {
+                foreach (var bid in bidGroup)
+                {
+                    if (bid.ID == order.ID)
+                    {
+                        if (cancel)
+                        {
+                            bid.Valid = false; return new[] {new OrderUpdate() {
+                            Amended = false,Message = "Order Canceled",Order = bid,Placed=false}
+                            };
+                        }
+
+                        if (bid.Price != order.Price)
+                        {
+                            bid.Valid = false;
+                            return ProcessLimitOrder(order);
+                        }
+                        else
+                        {
+                            bid.Quantity = order.Quantity;
+                        }
+                        return new[] {new OrderUpdate() {
+                            Amended = true,Message = "Order amended",Order = bid,Placed=true}
+                        };                        
+                    }
+                }
+            }
+
+            foreach (var askGroup in Asks.Values)
+            {
+                foreach (var ask in askGroup)
+                {
+                    if (ask.ID == order.ID)
+                    {
+                        if (cancel)
+                        {
+                            ask.Valid = false; return new[] {new OrderUpdate() {
+                            Amended = false,Message = "Order Canceled",Order = ask,Placed=false}
+                            };
+                        }
+
+                        if (ask.Price != order.Price)
+                        {
+                            ask.Valid = false;
+                            return ProcessLimitOrder(order);
+                        }
+                        else
+                        {
+                            ask.Quantity = order.Quantity;
+                        }
+                        return new[] {new OrderUpdate() {
+                            Amended = true,Message = "Order amended",Order = ask,Placed=true}
+                        };                                                
+                    }
+                }
+            }           
+
+            return new[] {new OrderUpdate() {
+                Message = "Order not found"
+            }};
         }
 
         public IEnumerable<OrderUpdate> ProcessMarketOrder(Order order)
@@ -137,6 +204,11 @@ namespace MarketSimulator.LimitOrderBook
                     while (orders.Any() && quantity > 0)
                     {
                         var nextOrder = orders.Peek();
+                        if (!nextOrder.Valid)
+                        {
+                            orders.Dequeue();
+                            continue;
+                        }
 
                         if (nextOrder.Quantity > quantity)
                         {
@@ -195,6 +267,11 @@ namespace MarketSimulator.LimitOrderBook
                     while (orders.Any() && quantity > 0)
                     {
                         var nextOrder = orders.Peek();
+                        if (!nextOrder.Valid)
+                        {
+                            orders.Dequeue();
+                            continue;
+                        }
 
                         if (nextOrder.Quantity > quantity)
                         {
@@ -237,14 +314,7 @@ namespace MarketSimulator.LimitOrderBook
 
         public IEnumerable<OrderUpdate> CancelOrder(Order order)
         {
-            throw new NotImplementedException();
-
-            var orderToCancel = Bids.SelectMany(s => s.Value).Union(Asks.SelectMany(s => s.Value)).FirstOrDefault(o => o.ID == order.ID);
-
-            if (orderToCancel != null)
-            {
-                
-            }
+            return AmendLimitOrder(order, true);            
         }
     }
 }

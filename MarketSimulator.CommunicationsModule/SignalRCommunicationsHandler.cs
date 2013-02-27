@@ -89,12 +89,12 @@ namespace MarketSimulator.CommunicationsModule
         }
         public bool ProcessOrderInstruction(Order order, string userID)
         {
-            RegisterUserID(userID, Clients.Caller.ConnectionID);
+            RegisterUserID(userID, Context.ConnectionId);
             return _commsHandler.ProcessOrderInstruction(order,userID);
         }
         public bool SubscribeToDataFeed(string userID)
         {
-            RegisterUserID(userID, Clients.Caller.ConnectionID);
+            RegisterUserID(userID, Context.ConnectionId);
             if (!_commsHandler.DataListeners.Contains(userID))
             _commsHandler.DataListeners.Add(userID);
             return true;
