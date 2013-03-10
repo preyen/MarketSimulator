@@ -12,7 +12,7 @@ using Owin;
 
 namespace MarketSimulator.CommunicationsModule
 {
-    public class SignalRCommunicationsHandler : IDataCommunicationsModule, IOrderCommunicationsModule
+    public class SignalRCommunicationsHandler : IDataFeed, ITradeInterface
     {
         private readonly static Lazy<SignalRCommunicationsHandler> _instance = new Lazy<SignalRCommunicationsHandler>(() => new SignalRCommunicationsHandler());
         private readonly Lazy<IHubConnectionContext> _clientsInstance = new Lazy<IHubConnectionContext>(() => GlobalHost.ConnectionManager.GetHubContext<Market>().Clients);

@@ -7,5 +7,7 @@ namespace MarketSimulator.Contracts
 {
     public enum OrderTimeValidity
     {
+        GoodTillTime,
+        GoodTillCancelled
     }
 }

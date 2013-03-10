@@ -7,5 +7,7 @@ namespace MarketSimulator.Contracts
 {
     public enum OrderExecutionValidity
     {
+        ExecuteAndEliminate,
+        ForceOrKill
     }
 }

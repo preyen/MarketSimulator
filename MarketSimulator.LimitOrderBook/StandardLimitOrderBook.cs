@@ -113,7 +113,8 @@ namespace MarketSimulator.LimitOrderBook
                     {
                         if (cancel)
                         {
-                            bid.Valid = false; return new[] {new OrderUpdate() {
+                            bid.Valid = false; 
+                            return new[] {new OrderUpdate() {
                             Amended = false,Message = "Order Canceled",Order = bid,Placed=false}
                             };
                         }
@@ -142,7 +143,8 @@ namespace MarketSimulator.LimitOrderBook
                     {
                         if (cancel)
                         {
-                            ask.Valid = false; return new[] {new OrderUpdate() {
+                            ask.Valid = false; 
+                            return new[] {new OrderUpdate() {
                             Amended = false,Message = "Order Canceled",Order = ask,Placed=false}
                             };
                         }

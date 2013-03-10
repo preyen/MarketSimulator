@@ -8,11 +8,11 @@ namespace MarketSimulator
 {
     public class Simulator
     {
-        private ILimitOrderBook _limitOrderBook;
-        private IDataCommunicationsModule _dataCommunicationsModule;
-        private IOrderCommunicationsModule _orderCommunicationsModule;
+        private volatile ILimitOrderBook _limitOrderBook;
+        private IDataFeed _dataCommunicationsModule;
+        private ITradeInterface _orderCommunicationsModule;
 
-        public Simulator(ILimitOrderBook limitOrderBook, IDataCommunicationsModule dataCommunicationsModule, IOrderCommunicationsModule orderCommunicationsModule)
+        public Simulator(ILimitOrderBook limitOrderBook, IDataFeed dataCommunicationsModule, ITradeInterface orderCommunicationsModule)
         {
             _limitOrderBook = limitOrderBook;
             _dataCommunicationsModule = dataCommunicationsModule;

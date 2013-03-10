@@ -7,14 +7,14 @@ namespace MarketSimulator.Contracts
 {
     public delegate void ProcessOrderHandler(Order order, string userID);
 
-    public interface IDataCommunicationsModule
+    public interface IDataFeed
     {
        bool SubscribeToDataFeed(string userID);
        bool UnsubscribeFromDataFeed(string userID);
        bool PushUpdate(ILimitOrderBook limitOrderBook);        
     }
 
-    public interface IOrderCommunicationsModule
+    public interface ITradeInterface
     {      
        event ProcessOrderHandler OnOrder;
 
