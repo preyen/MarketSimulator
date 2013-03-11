@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketSimulator.Console", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestParticipant.Console", "TestParticipant.Console\TestParticipant.Console.csproj", "{51D8161F-472F-421E-B463-41ADAA7EB8B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestParticipantDataFeed.Console", "TestParticipantDataFeed.Console\TestParticipantDataFeed.Console.csproj", "{C09D54DD-8325-489C-AF61-BC034D4B8AB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,16 @@ Global
 		{51D8161F-472F-421E-B463-41ADAA7EB8B9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{51D8161F-472F-421E-B463-41ADAA7EB8B9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{51D8161F-472F-421E-B463-41ADAA7EB8B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C09D54DD-8325-489C-AF61-BC034D4B8AB8}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

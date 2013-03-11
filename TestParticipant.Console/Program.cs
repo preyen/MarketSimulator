@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MarketSimulator.Contracts;
 using Microsoft.AspNet.SignalR.Client;
@@ -30,6 +31,7 @@ namespace TestParticipant.Console
             var r = hub.Invoke<bool>("ProcessOrderInstruction", order, "test1");
             r.Wait();
 
+            Thread.Sleep(1000);
 
             order = new Order();
             order.Quantity = 4;
@@ -40,6 +42,8 @@ namespace TestParticipant.Console
 
             r = hub.Invoke<bool>("ProcessOrderInstruction", order, "test1");
             r.Wait();
+
+            Thread.Sleep(1000);
 
             order = new Order();
             order.Quantity = 2;
