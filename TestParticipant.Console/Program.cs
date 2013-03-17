@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MarketSimulator.Agents;
 using MarketSimulator.Contracts;
+using MarketSimulator.LimitOrderBook;
+using MarketSimulator.Utils;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNet.SignalR.Client.Hubs;
 
@@ -12,53 +15,114 @@ namespace TestParticipant.Console
 {
     class Program
     {
+        static LimitOrderBookSnapshot _limitOrderBookFastUpdate;
+        static LimitOrderBookSnapshot _limitOrderBook;
+
         static void Main(string[] args)
         {
+            Thread.Sleep(1000);
+
             var connection = new HubConnection(@"http://localhost:8080/signalr");
             var hub = connection.CreateHubProxy("market");
             connection.Start().Wait();
 
             System.Console.WriteLine("Connected");
-            hub.On("pong", () => { System.Console.WriteLine("Pong called"); });
 
-            var order = new Order();            
-            order.Quantity = 4;
-            order.Price = 100;
-            order.Type = OrderType.LimitOrder;
-            order.Side = OrderSide.Buy;
-            order.UserID = "test1";
+            hub.On<LimitOrderBookSnapshot>("Update", data =>
+                UpdateLimitOrderBook(data)
+            );
 
-            var r = hub.Invoke<bool>("ProcessOrderInstruction", order, "test1");
-            r.Wait();
+            var subscribeResult = hub.Invoke("SubscribeToDataFeed", "TestDriver");
+            subscribeResult.Wait();
 
-            Thread.Sleep(1000);
+            var orders = new List<Order>();
 
-            order = new Order();
-            order.Quantity = 4;
-            order.Price = 101;
-            order.Type = OrderType.LimitOrder;
-            order.Side = OrderSide.Sell;
-            order.UserID = "test1";
 
-            r = hub.Invoke<bool>("ProcessOrderInstruction", order, "test1");
-            r.Wait();
+            orders.Add(new Order() { Price = 100, Quantity = 10, Side = OrderSide.Buy, Type = OrderType.LimitOrder,UserID="TestDriver"});
+            orders.Add(new Order() { Price = 99, Quantity = 10, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "TestDriver" });
+            orders.Add(new Order() { Price = 98, Quantity = 20, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "TestDriver" });
+            orders.Add(new Order() { Price = 99.5, Quantity = 3, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "TestDriver" });
+            orders.Add(new Order() { Price = 102, Quantity = 10, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "TestDriver" });
+            orders.Add(new Order() { Price = 103, Quantity = 8, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "TestDriver" });
+            orders.Add(new Order() { Price = 102.5, Quantity = 19, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "TestDriver" });
 
-            Thread.Sleep(1000);
+            foreach (var order in orders)
+            {
+                var r = hub.Invoke<bool>("ProcessOrderInstruction", order, "TestDriver");
+                r.Wait();
+            }
 
-            order = new Order();
-            order.Quantity = 2;
-            order.Type = OrderType.MarketOrder;
-            order.Side = OrderSide.Buy;
-            order.UserID = "test1";
+            Thread.Sleep(5);
 
-            r = hub.Invoke<bool>("ProcessOrderInstruction", order, "test1");
-            r.Wait();
+            var rng = new CSharpRandomNumberGenerator() as IRandomNumberGenerator;
 
-                       
+            var agents = new List<IAgent>();            
 
-            System.Console.WriteLine(r.Result);
+            for (int i = 0; i < 200; i++)
+            {
+                agents.Add(new RandomLiquidityMaker(rng, 300, 0.1, 0.3));
+            }
+
+            for (int i = 0; i < 500; i++)
+            {
+                agents.Add(new RandomLiquidityTaker(rng, 30, 0.9));
+            }            
+
+            _limitOrderBook = _limitOrderBookFastUpdate;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                agents.Shuffle();
+
+                var count = 0;
+                foreach (var agent in agents)
+                {
+                    var order = agent.GetNextAction(_limitOrderBook);
+                    if (order != null)
+                    {
+                        order.UserID = "testAgent" + count.ToString();
+                        var r = hub.Invoke<bool>("ProcessOrderInstruction", order, "testAgent" + count.ToString());
+                        r.Wait();
+                    }
+                    count++;
+                }
+                _limitOrderBook = _limitOrderBookFastUpdate;
+                if (_limitOrderBook.BestAskPrice <= _limitOrderBook.BestBidPrice)
+                {
+                    throw new Exception("Book crossed");
+                }
+
+                System.Console.WriteLine(_limitOrderBook.BestBidPrice + "\t\t\t" + _limitOrderBook.BestAskPrice);
+                //Thread.Sleep(5000);
+            }          
 
             System.Console.ReadKey();
         }
+
+        private static void UpdateLimitOrderBook(LimitOrderBookSnapshot lob)
+        {
+            lob.BestAskPrice = lob.BestAskPrice ?? 102;
+            lob.BestBidPrice = lob.BestBidPrice ?? 100;
+            _limitOrderBookFastUpdate = lob;
+        }
+    }
+
+    public static class ExtensionMethods
+    {
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            Random rng = new Random();
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
     }
 }
+

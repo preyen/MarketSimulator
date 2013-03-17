@@ -41,11 +41,17 @@ namespace MarketSimulator.CommunicationsModule
 
         public bool PushUpdate(ILimitOrderBook limitOrderBook)
         {
+            var orderBookSnapshot = new LimitOrderBookSnapshot();
+            orderBookSnapshot.BestAskPrice = limitOrderBook.BestAsk != null ? (double?)limitOrderBook.BestAsk.Price : null;
+            orderBookSnapshot.BestAskQuantity = limitOrderBook.BestAsk != null ? (double?)limitOrderBook.BestAsk.Quantity : null;
+            orderBookSnapshot.BestBidPrice = limitOrderBook.BestBid != null ? (double?)limitOrderBook.BestBid.Price : null;
+            orderBookSnapshot.BestBidQuantity = limitOrderBook.BestBid != null ? (double?)limitOrderBook.BestBid.Quantity : null;
+
             var dataConnections = ConnectionIDs.Where(c => DataListeners.Contains(c.Key)).Select(c => c.Value);
 
             foreach (var connID in dataConnections)
             {
-                _clientsInstance.Value.Client(connID).Update(limitOrderBook);
+                _clientsInstance.Value.Client(connID).Update(orderBookSnapshot);
             }
 
             return true;

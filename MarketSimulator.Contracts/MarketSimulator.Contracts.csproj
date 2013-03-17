@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ICommunicationsModule.cs" />
     <Compile Include="ILimitOrderBook.cs" />
+    <Compile Include="LimitOrderBookSnapshot.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderExecutionValidity.cs" />

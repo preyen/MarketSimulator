@@ -28,12 +28,13 @@ namespace MarketSimulator.LimitOrderBook
 
         public Order BestBid
         {
-            get { return new Order { Price = Bids.Last().Key, Quantity = Bids.Last().Value.Sum(b => b.Quantity) }; }
+            get { return Bids.Count != 0 ? new Order { Price = Bids.Last().Key, Quantity = Bids.Last().Value.Sum(b => b.Quantity) } : null; }
         }
 
         public Order BestAsk
         {
-            get { return new Order { Price = Asks.First().Key, Quantity = Asks.First().Value.Sum(a => a.Quantity)}; }
+            get { return Asks.Count != 0 ? new Order { Price = Asks.First().Key, Quantity = Asks.First().Value.Sum(a => a.Quantity)} : null
+; }
         }
 
         public IEnumerable<OrderUpdate> ProcessLimitOrder(Order order)
@@ -56,11 +57,11 @@ namespace MarketSimulator.LimitOrderBook
 
         private IEnumerable<OrderUpdate> ProcessSellLimitOrder(Order order)
         {
-            /*if (Bids.Any() && price < Bids.Last().Key)
+            if (Bids.Any() && order.Price < Bids.Last().Key)
             {
                 //cross order
-                return false;
-            }*/
+                return new [] {new OrderUpdate() { Message = "Cross order", Order = order }};
+            }
             if (!Asks.Keys.Contains(order.Price))
             {
                 Asks.Add(order.Price, new Queue<Order>());
@@ -77,11 +78,11 @@ namespace MarketSimulator.LimitOrderBook
 
         private IEnumerable<OrderUpdate> ProcessBuyLimitOrder(Order order)
         {
-            /*if (Asks.Any() && price > Asks.First().Key)
+            if (Asks.Any() && order.Price > Asks.First().Key)
             {
                 //cross order
-                return false;
-            }*/
+                return new[] { new OrderUpdate() { Message = "Cross order", Order = order } };
+            }
             if (!Bids.Keys.Contains(order.Price))
             {
                 Bids.Add(order.Price, new Queue<Order>());

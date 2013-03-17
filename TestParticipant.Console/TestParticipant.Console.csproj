@@ -47,8 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAgent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomLiquidityMaker.cs" />
+    <Compile Include="RandomLiquidityTaker.cs" />
+    <Compile Include="Utils\CSharpRandomNumberGenerator.cs" />
+    <Compile Include="Utils\IRandomNumberGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -58,6 +63,10 @@
     <ProjectReference Include="..\MarketSimulator.Contracts\MarketSimulator.Contracts.csproj">
       <Project>{9ed5339b-32a3-4ff0-9055-11d8c44a9211}</Project>
       <Name>MarketSimulator.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MarketSimulator.LimitOrderBook\MarketSimulator.LimitOrderBook.csproj">
+      <Project>{763a6256-272e-44ef-a0d4-66ea82b92279}</Project>
+      <Name>MarketSimulator.LimitOrderBook</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
