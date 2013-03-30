@@ -22,7 +22,7 @@ namespace MarketSimulator.Agents
         public Order GetNextAction(LimitOrderBookSnapshot limitOrderBook)
         {
             Order order;
-            var size = _rng.GetRandomDouble() * _maxOrderSize;
+            var size = Math.Ceiling(_maxOrderSize * _rng.GetRandomDouble());
 
             var randomNumber = _rng.GetRandomDouble();
 

@@ -8,6 +8,7 @@ using MarketSimulator.Agents;
 using MarketSimulator.Contracts;
 using MarketSimulator.LimitOrderBook;
 using MarketSimulator.Utils;
+using MathNet.Numerics.Distributions;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNet.SignalR.Client.Hubs;
 
@@ -56,16 +57,18 @@ namespace TestParticipant.Console
 
             var rng = new CSharpRandomNumberGenerator() as IRandomNumberGenerator;
 
-            var agents = new List<IAgent>();            
+            var agents = new List<IAgent>();
+
+            var normalDist = new Normal(0,0.2);
 
             for (int i = 0; i < 200; i++)
             {
-                agents.Add(new RandomLiquidityMaker(rng, 300, 0.1, 0.3));
+                agents.Add(new RandomLiquidityMaker(rng, 30, 2, 0.3,normalDist,4));
             }
 
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 200; i++)
             {
-                agents.Add(new RandomLiquidityTaker(rng, 30, 0.9));
+                agents.Add(new RandomLiquidityTaker(rng, 10, 0.8));
             }            
 
             _limitOrderBook = _limitOrderBookFastUpdate;
@@ -92,8 +95,9 @@ namespace TestParticipant.Console
                     throw new Exception("Book crossed");
                 }
 
-                System.Console.WriteLine(_limitOrderBook.BestBidPrice + "\t\t\t" + _limitOrderBook.BestAskPrice);
                 //Thread.Sleep(5000);
+                System.Console.WriteLine(_limitOrderBook.BestBidPrice + "\t\t\t" + _limitOrderBook.BestAskPrice);
+               
             }          
 
             System.Console.ReadKey();
@@ -101,9 +105,13 @@ namespace TestParticipant.Console
 
         private static void UpdateLimitOrderBook(LimitOrderBookSnapshot lob)
         {
-            lob.BestAskPrice = lob.BestAskPrice ?? 102;
-            lob.BestBidPrice = lob.BestBidPrice ?? 100;
-            _limitOrderBookFastUpdate = lob;
+            if (lob.BestAskPrice != null)
+            {
+                lob.BestAskPrice = lob.BestAskPrice ?? 102;
+                lob.BestBidPrice = lob.BestBidPrice ?? 100;
+                _limitOrderBookFastUpdate = lob;
+            }
+            //System.Console.WriteLine(_limitOrderBookFastUpdate.BestBidPrice + "\t\t\t" + _limitOrderBookFastUpdate.BestAskPrice);
         }
     }
 
