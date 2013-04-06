@@ -10,6 +10,8 @@ namespace MarketSimulator.Contracts
         LimitOrder,
         MarketOrder,
         StopLimitOrder,
-        StopMarketOrder
+        StopMarketOrder,
+        Cancel,
+        Amend
     }
 }

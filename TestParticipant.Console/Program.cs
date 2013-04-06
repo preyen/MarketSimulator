@@ -59,7 +59,7 @@ namespace TestParticipant.Console
 
             var agents = new List<IAgent>();
 
-            var normalDist = new Normal(0,0.2);
+            var normalDist = new Normal(0,0.5);
 
             for (int i = 0; i < 200; i++)
             {
@@ -69,7 +69,9 @@ namespace TestParticipant.Console
             for (int i = 0; i < 200; i++)
             {
                 agents.Add(new RandomLiquidityTaker(rng, 10, 0.8));
-            }            
+            }
+
+            agents.Add(new BigOrderAgent());
 
             _limitOrderBook = _limitOrderBookFastUpdate;
 
@@ -90,7 +92,7 @@ namespace TestParticipant.Console
                     count++;
                 }
                 _limitOrderBook = _limitOrderBookFastUpdate;
-                if (_limitOrderBook.BestAskPrice <= _limitOrderBook.BestBidPrice)
+                if (_limitOrderBook.BestAskPrice < _limitOrderBook.BestBidPrice)
                 {
                     throw new Exception("Book crossed");
                 }

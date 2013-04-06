@@ -105,6 +105,7 @@ namespace MarketSimulator.LimitOrderBook
         public IEnumerable<OrderUpdate> AmendLimitOrder(Order order,bool cancel)
         {
             var amended = false;
+            var remove = false;
 
             foreach (var bidGroup in Bids.Values)
             {
@@ -114,7 +115,14 @@ namespace MarketSimulator.LimitOrderBook
                     {
                         if (cancel)
                         {
-                            bid.Valid = false; 
+                            bid.Valid = false;
+
+                            if (bidGroup.Count() <= 1)
+                            {
+                                remove = true;
+                                Bids.Remove(bid.Price);
+                            }
+                            
                             return new[] {new OrderUpdate() {
                             Amended = false,Message = "Order Canceled",Order = bid,Placed=false}
                             };
@@ -123,6 +131,13 @@ namespace MarketSimulator.LimitOrderBook
                         if (bid.Price != order.Price)
                         {
                             bid.Valid = false;
+
+                            if (bidGroup.Count() <= 1)
+                            {
+                                remove = true;
+                                Bids.Remove(bid.Price);
+                            }
+
                             return ProcessLimitOrder(order);
                         }
                         else
@@ -144,7 +159,14 @@ namespace MarketSimulator.LimitOrderBook
                     {
                         if (cancel)
                         {
-                            ask.Valid = false; 
+                            ask.Valid = false;
+
+                            if (askGroup.Count() <= 1)
+                            {
+                                remove = true;
+                                Asks.Remove(ask.Price);
+                            }
+
                             return new[] {new OrderUpdate() {
                             Amended = false,Message = "Order Canceled",Order = ask,Placed=false}
                             };
@@ -153,6 +175,11 @@ namespace MarketSimulator.LimitOrderBook
                         if (ask.Price != order.Price)
                         {
                             ask.Valid = false;
+                            if (askGroup.Count() <= 1)
+                            {
+                                remove = true;
+                                Asks.Remove(ask.Price);
+                            }
                             return ProcessLimitOrder(order);
                         }
                         else
@@ -167,7 +194,8 @@ namespace MarketSimulator.LimitOrderBook
             }           
 
             return new[] {new OrderUpdate() {
-                Message = "Order not found"
+                Message = "Order not found",
+                Order = order                
             }};
         }
 

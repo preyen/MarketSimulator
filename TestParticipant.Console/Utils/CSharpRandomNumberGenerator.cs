@@ -17,5 +17,9 @@ namespace MarketSimulator.Utils
         {
             return _rng.NextDouble();
         }
+        public int GetRandomInt(int min, int max)
+        {
+            return _rng.Next(min, max);
+        }
     }
 }

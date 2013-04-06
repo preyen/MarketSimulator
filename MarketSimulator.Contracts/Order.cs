@@ -7,7 +7,7 @@ namespace MarketSimulator.Contracts
 {
     public class Order
     {        
-        public string ID { get; private set; }
+        public string ID { get; set; }
         public string UserID { get;  set; }
         public OrderType Type { get; set; }
         public OrderSide Side { get; set; }

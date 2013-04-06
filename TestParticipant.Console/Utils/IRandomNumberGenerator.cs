@@ -8,5 +8,6 @@ namespace MarketSimulator.Utils
     public interface IRandomNumberGenerator
     {
         double GetRandomDouble();
+        int GetRandomInt(int min, int max);
     }
 }

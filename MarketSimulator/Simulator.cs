@@ -37,6 +37,12 @@ namespace MarketSimulator
                     break;
                 case OrderType.StopMarketOrder:
                     break;
+                case OrderType.Cancel:
+                    orderUpdates = _limitOrderBook.CancelOrder(order);
+                    break;
+                case OrderType.Amend:
+                    orderUpdates = _limitOrderBook.AmendLimitOrder(order);
+                    break;
                 default:
                     throw new Exception("Unknown order type");
             }
