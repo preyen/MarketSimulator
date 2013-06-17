@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.Distributions;
+using System.Drawing;
 
 namespace HetroTradingRules.TestParticipant.Console
 {
@@ -29,12 +30,41 @@ namespace HetroTradingRules.TestParticipant.Console
 
         static void Main(string[] args)
         {           
+            var fundamentalValue = GenerateFunamentalValuePath(SimulationSteps,FundamentalValueInitial,FundamentalValueDrift,FundamentalValueVariance);                      
 
-            double[] fundamentalValue = GenerateFunamentalValuePath(SimulationSteps,FundamentalValueInitial,FundamentalValueDrift,FundamentalValueVariance);
+            var fundamentalistScale = 0;
+            var chartistScale = 0;
+            var noiseScale = NoiseDensityVariance;
 
+            var fundamentalistDistribution = new Laplace(0, fundamentalistScale);
+            var chartistDistribution = new Laplace(0, chartistScale);
+            var noiseDistribution = new Laplace(0, noiseScale);
+            var agentDistribution = new Random();
 
+            var agents = new HetroTradingRulesAgent[NumberOfAgents];
 
+            for (int i = 0; i < NumberOfAgents; i++)
+            {
+                agents[i] = new HetroTradingRulesAgent(fundamentalistDistribution.Sample(), chartistDistribution.Sample(), noiseDistribution.Sample(), ReferenceAgentTimeHorizon, ReferenceRiskAversionLevel);
+            }
 
+            var spotPrice = new double[SimulationSteps];
+            spotPrice[0] = FundamentalValueInitial;
+
+            var noise = GenerateNoisePath(SimulationSteps,0, NoiseVariance);
+
+            for (int i = 0; i < SimulationSteps; i++)
+            {
+                var agentIndex = (int) Math.Round(NumberOfAgents * agentDistribution.NextDouble());
+                agents[agentIndex].GetAction(i,spotPrice, fundamentalValue, noise);
+            }
+        }
+
+        private static double[] GenerateNoisePath(int simulationSteps, int mean, double noiseVariance)
+        {
+            var standardNormal = new Normal(mean, noiseVariance);
+
+            return standardNormal.Samples().Take(simulationSteps).ToArray();
         }
 
         private static double[] GenerateFunamentalValuePath(int simulationSteps, double fundamentalValueInitial, double fundamentalValueDrift, double fundamentalValueVariance)

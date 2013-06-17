@@ -12,19 +12,41 @@ namespace HetroTradingRules.TestParticipant.Console
         public int StockHeld { get; set; }
         public double CashHeld { get; set; }
 
-        public HetroTradingRulesAgent(double sigma1, double sigma2, double sigmaN, double referenceAgentTimeHorizon, double referenceRiskAversionLevel)
+        private double _fundamentalistWeighting;
+        private double _chartistWeighting;
+        private double _noiseWeighting;
+        private int _agentTimeHorizon;
+        private double _agentRiskAversionLevel;
+
+        public HetroTradingRulesAgent(double fundementalistWeighting, double chartistWeighting, double noiseWeighting, double referenceAgentTimeHorizon, double referenceRiskAversionLevel)
         {
-            var g1 = 1.0; //pure fundamentalist strategy
-            var g2 = 1.0; //chartist strategy
-            var n = 1.0; //noise trading strategy
-
-            var agentTimeHorizon = Math.Floor(referenceAgentTimeHorizon * ((1 + g1)/(1+g2)));
-            var agentRiskAversionLevel = referenceRiskAversionLevel * ((1 + g1) / (1 + g2));
-
+            _fundamentalistWeighting = fundementalistWeighting;
+            _chartistWeighting = chartistWeighting;
+            _noiseWeighting = noiseWeighting;
+            _agentTimeHorizon = (int) Math.Floor(referenceAgentTimeHorizon * ((1 + fundementalistWeighting) / (1 + chartistWeighting)));
+            _agentRiskAversionLevel = referenceRiskAversionLevel * ((1 + fundementalistWeighting) / (1 + chartistWeighting));         
         }
 
-        public double GetAction(double spotPrice,double fundamentalValue, double noise) 
+        public double GetAction(int timeStep, double[] spotPrice,double[] fundamentalValue, double[] noise) 
         {
+            var fundamentalTimeHorizon = _agentTimeHorizon;
+
+            var normalisationTerm = 1/(_fundamentalistWeighting + _chartistWeighting + _noiseWeighting);
+
+            var fundamentalistTerm = _fundamentalistWeighting * (1/fundamentalTimeHorizon) * Math.Log(fundamentalValue[timeStep]/spotPrice[timeStep]);
+
+            var averageReturn = (1 / _agentTimeHorizon) * Enumerable.Range(1,_agentTimeHorizon).Aggregate(0d,(curr,j) => curr + Math.Log(spotPrice[timeStep-j] / spotPrice[timeStep-j-1]));
+            var chartistTerm = _chartistWeighting * averageReturn;
+
+            var noiseTerm = _noiseWeighting * noise[timeStep];
+
+
+            var expectedReturn = normalisationTerm * (fundamentalistTerm + chartistTerm + noiseTerm);
+
+            var expectedPrice = spotPrice[timeStep] * Math.Exp(expectedReturn * _agentTimeHorizon);
+
+
+
             return 0;
         }
 
@@ -34,3 +56,4 @@ namespace HetroTradingRules.TestParticipant.Console
         }
     }
 }
+
