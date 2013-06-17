@@ -18,10 +18,11 @@ namespace RealTime.TestParticipant.Console
 
         static void Main(string[] args)
         {
+            System.IO.File.WriteAllLines(@"c:\temp\test.csv", new string[] {"Time,BestBid,BestAsk"});
             var providers = new List<LiquidityProvider>();
 
             var rng = new CSharpRandomNumberGenerator() as IRandomNumberGenerator;
-            var normalDist = new Normal(0, 0.2);
+            var normalDist = new Normal(0, 0.01);
 
             var numLiquidityProviders = 10;
             var numLiquidityTakers = 10;
@@ -35,7 +36,7 @@ namespace RealTime.TestParticipant.Console
 
             for (int i = 0; i < numLiquidityTakers; i++)
             {
-                takers.Add(new RandomLiquidityTaker(rng, 5, 0.5));
+                takers.Add(new RandomLiquidityTaker(rng, 5, 0.6));
             }
 
             var connection = new HubConnection(@"http://localhost:8080/signalr");
@@ -70,7 +71,7 @@ namespace RealTime.TestParticipant.Console
 
             while (true)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(10);
 
                 var rndLT = rng.GetRandomInt(0, numLiquidityTakers - 1);
                 var rndLP = rng.GetRandomInt(0, numLiquidityProviders - 1);
@@ -106,8 +107,11 @@ namespace RealTime.TestParticipant.Console
         {
             if (data.BestAskPrice != null)
             {
+                data.BestAskPrice = data.BestAskPrice ?? _lob.BestAskPrice;
+                data.BestBidPrice = data.BestBidPrice ?? _lob.BestBidPrice;
                 _lob = data;
                 System.Console.WriteLine(data.BestBidPrice + "\t\t\t" + data.BestAskPrice);
+                System.IO.File.AppendAllLines(@"c:\temp\test.csv", new string[] { DateTime.Now.Ticks + "," + data.BestBidPrice + "," + data.BestAskPrice });
             }
         }
     }

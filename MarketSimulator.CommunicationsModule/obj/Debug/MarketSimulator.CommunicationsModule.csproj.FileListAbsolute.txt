@@ -1,0 +1,17 @@
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\MarketSimulator.CommunicationsModule.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\MarketSimulator.CommunicationsModule.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\MarketSimulator.Contracts.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.AspNet.SignalR.Owin.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.Owin.Host.HttpListener.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.Owin.Hosting.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Owin.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\MarketSimulator.Contracts.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.AspNet.SignalR.Owin.xml
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Microsoft.Owin.Host.HttpListener.xml
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\obj\Debug\MarketSimulator.CommunicationsModule.csprojResolveAssemblyReference.cache
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\obj\Debug\MarketSimulator.CommunicationsModule.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.CommunicationsModule\obj\Debug\MarketSimulator.CommunicationsModule.pdb

@@ -1,0 +1,10 @@
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\TestParticipantDataFeed.Console.exe.config
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\TestParticipantDataFeed.Console.exe
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\TestParticipantDataFeed.Console.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\MarketSimulator.Contracts.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\Microsoft.AspNet.SignalR.Client.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\bin\Debug\MarketSimulator.Contracts.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\obj\Debug\TestParticipantDataFeed.Console.csprojResolveAssemblyReference.cache
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\obj\Debug\TestParticipantDataFeed.Console.exe
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipantDataFeed.Console\obj\Debug\TestParticipantDataFeed.Console.pdb

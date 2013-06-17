@@ -1,0 +1,9 @@
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\bin\Debug\MarketSimulator.exe
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\bin\Debug\MarketSimulator.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\bin\Debug\MarketSimulator.Contracts.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\bin\Debug\MarketSimulator.Contracts.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\obj\x86\Debug\MarketSimulator.csprojResolveAssemblyReference.cache
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\obj\x86\Debug\MarketSimulator.Properties.Resources.resources
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\obj\x86\Debug\MarketSimulator.csproj.GenerateResource.Cache
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\obj\x86\Debug\MarketSimulator.exe
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator\obj\x86\Debug\MarketSimulator.pdb
