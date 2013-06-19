@@ -29,7 +29,8 @@ namespace HetroTradingRules.TestParticipant.Console
 
 
         static void Main(string[] args)
-        {           
+        {
+            var randomGenerator = new Random();
             var fundamentalValue = GenerateFunamentalValuePath(SimulationSteps,FundamentalValueInitial,FundamentalValueDrift,FundamentalValueVariance);                      
 
             var fundamentalistScale = 0;
@@ -45,7 +46,7 @@ namespace HetroTradingRules.TestParticipant.Console
 
             for (int i = 0; i < NumberOfAgents; i++)
             {
-                agents[i] = new HetroTradingRulesAgent(fundamentalistDistribution.Sample(), chartistDistribution.Sample(), noiseDistribution.Sample(), ReferenceAgentTimeHorizon, ReferenceRiskAversionLevel);
+                agents[i] = new HetroTradingRulesAgent(fundamentalistDistribution.Sample(), chartistDistribution.Sample(), noiseDistribution.Sample(), ReferenceAgentTimeHorizon, ReferenceRiskAversionLevel,randomGenerator);
             }
 
             var spotPrice = new double[SimulationSteps];
@@ -56,7 +57,7 @@ namespace HetroTradingRules.TestParticipant.Console
             for (int i = 0; i < SimulationSteps; i++)
             {
                 var agentIndex = (int) Math.Round(NumberOfAgents * agentDistribution.NextDouble());
-                agents[agentIndex].GetAction(i,spotPrice, fundamentalValue, noise);
+                agents[agentIndex].GetAction(i,spotPrice, fundamentalValue, noise,null,null);
             }
         }
 
