@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.Distributions;
 using System.Drawing;
+using System.Threading;
+using Microsoft.AspNet.SignalR.Client.Hubs;
+using MarketSimulator.Contracts;
 
 namespace HetroTradingRules.TestParticipant.Console
 {
@@ -25,7 +28,9 @@ namespace HetroTradingRules.TestParticipant.Console
         private const double NoiseDensityVariance = 1;
         private const double NoiseVariance = 0.0001;
 
-        private const double ReferenceRiskAversionLevel = 0.1;        
+        private const double ReferenceRiskAversionLevel = 0.1;
+
+        private static LimitOrderBookSnapshot _currentLimitOrderBook;
 
 
         static void Main(string[] args)
@@ -33,8 +38,8 @@ namespace HetroTradingRules.TestParticipant.Console
             var randomGenerator = new Random();
             var fundamentalValue = GenerateFunamentalValuePath(SimulationSteps,FundamentalValueInitial,FundamentalValueDrift,FundamentalValueVariance);                      
 
-            var fundamentalistScale = 0;
-            var chartistScale = 0;
+            var fundamentalistScale = 1;
+            var chartistScale = 1;
             var noiseScale = NoiseDensityVariance;
 
             var fundamentalistDistribution = new Laplace(0, fundamentalistScale);
@@ -49,6 +54,21 @@ namespace HetroTradingRules.TestParticipant.Console
                 agents[i] = new HetroTradingRulesAgent(fundamentalistDistribution.Sample(), chartistDistribution.Sample(), noiseDistribution.Sample(), ReferenceAgentTimeHorizon, ReferenceRiskAversionLevel,randomGenerator);
             }
 
+            Thread.Sleep(1000);
+
+            var connection = new HubConnection(@"http://localhost:8080/signalr");
+            var hub = connection.CreateHubProxy("market");
+            connection.Start().Wait();
+
+            System.Console.WriteLine("Connected");
+
+            hub.On<LimitOrderBookSnapshot>("Update", data =>
+                UpdateLimitOrderBook(data)
+            );
+
+            var subscribeResult = hub.Invoke("SubscribeToDataFeed", "TestDriver");
+            subscribeResult.Wait();
+
             var spotPrice = new double[SimulationSteps];
             spotPrice[0] = FundamentalValueInitial;
 
@@ -57,7 +77,21 @@ namespace HetroTradingRules.TestParticipant.Console
             for (int i = 0; i < SimulationSteps; i++)
             {
                 var agentIndex = (int) Math.Round(NumberOfAgents * agentDistribution.NextDouble());
-                agents[agentIndex].GetAction(i,spotPrice, fundamentalValue, noise,null,null);
+                var order = agents[agentIndex].GetAction(i,spotPrice, fundamentalValue, noise,_currentLimitOrderBook != null ? _currentLimitOrderBook.BestBidPrice : null,_currentLimitOrderBook != null ? _currentLimitOrderBook.BestAskPrice : null);
+
+                if (order != null)
+                {
+                    var r = hub.Invoke<bool>("ProcessOrderInstruction", order, "Agent" + agentIndex);
+                    r.Wait();
+                }
+            }
+        }
+
+        private static void UpdateLimitOrderBook(LimitOrderBookSnapshot data)
+        {
+            if (data != null)
+            {
+                _currentLimitOrderBook = data;
             }
         }
 

@@ -38,6 +38,12 @@
     <Reference Include="MathNet.Numerics.IO">
       <HintPath>..\packages\MathNet.Numerics.2.4.0\lib\net40\MathNet.Numerics.IO.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Client">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.1.0.0-rc2\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />

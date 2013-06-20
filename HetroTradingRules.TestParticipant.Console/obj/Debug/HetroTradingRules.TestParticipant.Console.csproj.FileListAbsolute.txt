@@ -25,3 +25,9 @@ C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradi
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\tr\ZedGraph.resources.dll
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\zh-cn\ZedGraph.resources.dll
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\zh-tw\ZedGraph.resources.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\MarketSimulator.Contracts.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\Microsoft.AspNet.SignalR.Client.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\MarketSimulator.Contracts.pdb
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\Microsoft.AspNet.SignalR.Client.xml
+C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\HetroTradingRules.TestParticipant.Console\bin\Debug\Newtonsoft.Json.xml
