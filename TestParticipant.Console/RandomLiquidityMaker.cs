@@ -30,7 +30,7 @@ namespace MarketSimulator.Agents
         public virtual Order GetNextAction(LimitOrderBookSnapshot limitOrderBook)
         {            
             var size = Math.Ceiling(_maxOrderSize * _rng.GetRandomDouble());
-            var priceDiff = _maxPriceDifferential * Math.Abs(_normal.Sample()); //((limitOrderBook.BestBidPrice.Value + limitOrderBook.BestAskPrice.Value) / 2) * _maxPriceDifferential * Math.Abs(_normal.Sample());// _rng.GetRandomDouble();
+            var priceDiff = _maxPriceDifferential * Math.Abs(_normal.Sample()); 
 
             Order order;
 

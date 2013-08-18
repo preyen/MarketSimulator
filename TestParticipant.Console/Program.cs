@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -59,7 +60,7 @@ namespace TestParticipant.Console
 
             var agents = new List<IAgent>();
 
-            var normalDist = new Normal(0,0.5);
+            var normalDist = new Normal(0,10.0);
 
             for (int i = 0; i < 200; i++)
             {
@@ -71,11 +72,15 @@ namespace TestParticipant.Console
                 agents.Add(new RandomLiquidityTaker(rng, 10, 0.8));
             }
 
-            agents.Add(new BigOrderAgent());
+            //agents.Add(new BigOrderAgent());
 
             _limitOrderBook = _limitOrderBookFastUpdate;
 
-            for (int i = 0; i < 1000; i++)
+            var outputFile = @"c:\temp\randomTestSigma10p0.csv";
+
+            File.WriteAllLines(outputFile, new string[] { string.Format("{0},{1},{2}", "TimeStep", "BestBid", "BestAsk") });
+
+            for (int i = 0; i < 200; i++)
             {
                 agents.Shuffle();
 
@@ -99,7 +104,7 @@ namespace TestParticipant.Console
 
                 //Thread.Sleep(5000);
                 System.Console.WriteLine(_limitOrderBook.BestBidPrice + "\t\t\t" + _limitOrderBook.BestAskPrice);
-               
+                File.AppendAllLines(outputFile,new string[] {string.Format("{0},{1},{2}",i,_limitOrderBook.BestBidPrice,_limitOrderBook.BestAskPrice)});
             }          
 
             System.Console.ReadKey();

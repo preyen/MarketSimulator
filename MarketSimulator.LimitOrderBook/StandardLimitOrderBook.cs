@@ -219,6 +219,19 @@ namespace MarketSimulator.LimitOrderBook
 
         private IEnumerable<OrderUpdate> ProcessSellMarketOrder(Order order)
         {
+            if (order.ExecutionValidity == OrderExecutionValidity.ForceOrKill)
+            {
+                if (order.Quantity > Bids.Sum(a => a.Value.Sum(l => l.Quantity)))
+                {
+                    return new[] {new OrderUpdate()
+                    {
+                        Placed = false,
+                        Order = order,
+                        Message = "FOK validity and not enough depth"
+                    }};
+                }
+            }
+
             var quantity = order.Quantity;
 
             var matches = new List<Match>();
@@ -282,6 +295,19 @@ namespace MarketSimulator.LimitOrderBook
 
         private IEnumerable<OrderUpdate> ProcessBuyMarketOrder(Order order)
         {
+            if (order.ExecutionValidity == OrderExecutionValidity.ForceOrKill)
+            {
+                if (order.Quantity > Asks.Sum(a => a.Value.Sum(l => l.Quantity)))
+                {
+                    return new[] {new OrderUpdate()
+                    {
+                        Placed = false,
+                        Order = order,
+                        Message = "FOK validity and not enough depth"
+                    }};
+                }
+            }
+
             var quantity = order.Quantity;
 
             var matches = new List<Match>();

@@ -68,7 +68,7 @@ namespace MarketSimulator.CommunicationsModule
         public bool PushOrderInstructionUpdate(OrderUpdate order, string userID)
         {
             var connID = ConnectionIDs[userID];
-            _clientsInstance.Value.Client(connID).Update(order);
+            _clientsInstance.Value.Client(connID).UpdateOrder(order);
             
 
             return true;
