@@ -43,8 +43,8 @@ namespace HetroTradingRules.TestParticipant.Console
             var fundamentalValue = GenerateFunamentalValuePath(SimulationSteps, FundamentalValueInitial, FundamentalValueDrift, FundamentalValueVariance);
 
             var fundamentalistScale = 10;
-            var chartistScale = 0.000000000000000000000001;
-            var noiseScale = 0.00000000000000000000000001;
+            var chartistScale = 1.2;
+            var noiseScale = 1;
 
             var fundamentalistDistribution = new Laplace(0, fundamentalistScale);
             fundamentalistDistribution.RandomSource = randomGenerator;
@@ -100,7 +100,7 @@ namespace HetroTradingRules.TestParticipant.Console
 
             var noise = GenerateNoisePath(SimulationSteps, 0, NoiseVariance);
 
-            var outputFile = @"c:\temp\hetroTradingRulesTest.csv";
+            var outputFile = @"c:\temp\hetroTradingRulesNoiseFundChart.csv";
 
             File.WriteAllLines(outputFile, new string[] { string.Format("{0},{1},{2}", "TimeStep", "Price", "Fundamental") });
 

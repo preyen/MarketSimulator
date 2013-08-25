@@ -54,11 +54,7 @@ namespace HetroTradingRules.TestParticipant.Console
 
             var expectedPrice = Math.Round(spotPrice[timeStep-1] * Math.Exp((double)(expectedReturn * _agentTimeHorizon)),4);
 
-            var varianceOfPastReturns = CalculateVarianceOfPastReturns(timeStep, spotPrice, lookBackTime, averageReturn);
-
-           // var stockToHoldAtExpected = GetStocksToHold(expectedPrice/2, expectedPrice, (double)_agentRiskAversionLevel, (double)varianceOfPastReturns);
-           // if (stockToHoldAtExpected <= 1) return null;// throw new Exception("Cannot short sell!!!");
-            
+            var varianceOfPastReturns = CalculateVarianceOfPastReturns(timeStep, spotPrice, lookBackTime, averageReturn);          
 
             var comfortPriceAtCurrentHolding = Math.Round(FindRoot(p => GetStocksToHold(p, expectedPrice, (double)_agentRiskAversionLevel, (double)varianceOfPastReturns) - StockHeld, expectedPrice, 0.0000001,0.01,expectedPrice), 4);
 
@@ -121,14 +117,7 @@ namespace HetroTradingRules.TestParticipant.Console
                 order = null;
             }
 
-            //if (order != null && ((order.Price - spotPrice[timeStep-1]) / spotPrice[timeStep-1]) > 0.1)
-            //{
-            //    order = null;
-            //}
-
             return order;
-
-            //TODO: keep track of orders
         }
 
         private static decimal CalculateAverageReturn(int timeStep, double[] spotPrice, int lookBackTime)
@@ -145,7 +134,6 @@ namespace HetroTradingRules.TestParticipant.Console
 
             return total / count;
 
-            //return Enumerable.Range(1, lookBackTime).Aggregate(0m, (curr, j) => curr + (((decimal)Math.Log(spotPrice[timeStep - j] / spotPrice[timeStep - j - 1])) / lookBackTime));
         }
 
         private static decimal CalculateVarianceOfPastReturns(int timeStep, double[] spotPrice, int lookBackTime, decimal averageReturn)
@@ -159,27 +147,20 @@ namespace HetroTradingRules.TestParticipant.Console
                 total += (decimal) Math.Pow((double)((decimal)Math.Log(spotPrice[timeStep - i] / spotPrice[timeStep - i - 1]) - averageReturn), 2);
             }
 
-            return total / count;
-
-            //return Enumerable.Range(1, lookBackTime).Aggregate(0m, (curr, j) => curr + (((decimal)Math.Pow(((Math.Log((double)spotPrice[timeStep - j] / (double)spotPrice[timeStep - j - 1])) - (double)averageReturn), 2)) / lookBackTime));
+            return total / count;           
         }
 
-        public double GetPortfolioWealth(double spotPrice)
+        private double GetPortfolioWealth(double spotPrice)
         {
             return (StockHeld * spotPrice) + CashHeld;
         }
 
-        public int GetStocksToHold(double spotPrice,double expectedPrice,double riskAversionLevel,double varianceOfPastReturns)
+        private int GetStocksToHold(double spotPrice, double expectedPrice, double riskAversionLevel, double varianceOfPastReturns)
         {
             return (int) Math.Floor((Math.Log(expectedPrice / spotPrice) / (riskAversionLevel * varianceOfPastReturns * spotPrice)));
         }
 
-        public double FindRoot(Func<double, double> function, double initialGuess, double error)
-        {
-            return _solver.solve(function, error, initialGuess, 0.00001);
-        }
-
-        public double FindRoot(Func<double, double> function, double initialGuess, double error, double lowerBound, double upperBound)
+        private double FindRoot(Func<double, double> function, double initialGuess, double error, double lowerBound, double upperBound)
         {
             return _solver.solve(function, error, initialGuess, lowerBound, upperBound);
         }
