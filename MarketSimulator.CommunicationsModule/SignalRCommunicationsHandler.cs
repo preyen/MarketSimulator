@@ -31,11 +31,13 @@ namespace MarketSimulator.CommunicationsModule
 
         public bool SubscribeToDataFeed(string userID)
         {
+            //implemented in market hub below
             throw new NotImplementedException();
         }
 
         public bool UnsubscribeFromDataFeed(string userID)
         {
+            //implemented in market hub below
             throw new NotImplementedException();
         }
 
