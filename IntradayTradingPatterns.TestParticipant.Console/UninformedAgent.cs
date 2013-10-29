@@ -27,6 +27,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             return tradingPeriod == getIntFromBitArray(timingChromosome);
         }
 
+        //http://stackoverflow.com/questions/5283180/how-i-can-convert-bitarray-to-single-int
         private int getIntFromBitArray(BitArray bitArray)
         {
 
