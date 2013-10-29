@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +34,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         {
             _random = randomNumberGenerator;
             _maxOrderQuantity = maxOrderQuantity;
-            _name = name;
+            _name = name;               
         }
 
         public MarketSimulator.Contracts.Order GetNextAction(MarketSimulator.Contracts.LimitOrderBookSnapshot limitOrderBookSnapshot, int day, int tradingPeriod)
