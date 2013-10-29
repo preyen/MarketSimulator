@@ -7,13 +7,27 @@ using MarketSimulator.Contracts;
 
 namespace IntradayTradingPatterns.TestParticipant.Console
 {
-    public abstract class Agent : IAgent
-    {
+    public abstract class Agent
+    {        
         public double ExpectedAssetLiquidationValue { get; set; }
         public double ExpectedAssetLiquidationValueOrderRange { get; set; }
-        private Random _random;
+        public Random _random;
         private int _maxOrderQuantity;
         private string _name;
+
+        public string Name
+        {
+            get { return _name; }
+        }
+        
+        private string _timingChromosome;
+
+        public string TimingChromosome
+        {
+            get { return _timingChromosome; }
+            set { _timingChromosome = value; }
+        }
+
 
         public Agent(Random randomNumberGenerator, int maxOrderQuantity, string name)
         {
@@ -42,7 +56,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             {
                 //sell
                 order.Side = OrderSide.Sell;
-                if (randomDraw < limitOrderBookSnapshot.BestBidPrice)
+                if (limitOrderBookSnapshot != null && limitOrderBookSnapshot.BestBidPrice != null && randomDraw < limitOrderBookSnapshot.BestBidPrice)
                 {
                     //sell market order
                     order.Type = OrderType.MarketOrder;
@@ -57,7 +71,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             {
                 //buy
                 order.Side = OrderSide.Buy;
-                if (randomDraw > limitOrderBookSnapshot.BestAskPrice)
+                if (limitOrderBookSnapshot != null && limitOrderBookSnapshot.BestAskPrice != null && randomDraw > limitOrderBookSnapshot.BestAskPrice)
                 {
                     //buy market order
                     order.Type = OrderType.MarketOrder;
@@ -77,7 +91,11 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         public List<string> GetOrdersToCancel(int day, int tradingPeriod)
         {
-            throw new NotImplementedException();
+            return new List<string>();
         }
+               
+
+        public abstract void EvolveTimingChromosome();
+        
     }
 }

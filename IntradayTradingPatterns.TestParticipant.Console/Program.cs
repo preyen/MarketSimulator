@@ -15,10 +15,19 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         static void Main(string[] args)
         {
+            System.Threading.Thread.Sleep(1000);
+
             int NumberOfInformedAgents = 100;
             int NumberOfUninformedAgents = 100;
             int NumberOfDays = 2250;
             int NumberOfTradingPeriods = 8;
+            double MinExpectedAssetValue = 20;
+            double MaxExpectedAssetValue = 120;
+            double MinExpectedAssetValueRange = 5;
+            double MaxExpectedAssetValueRange = 15;
+            int NumberOfDaysInLearningPeriod = 15;
+
+
             var random = new Random();
 
             var connection = new HubConnection(@"http://localhost:8080/signalr");
@@ -34,7 +43,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             var subscribeResult = hub.Invoke("SubscribeToDataFeed", "TestDriver");
             subscribeResult.Wait();
 
-            var agents = new List<IAgent>();
+            var agents = new List<Agent>();
 
             //init infrormed agents
             for (int i = 0; i < NumberOfInformedAgents; i++)
@@ -54,6 +63,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             //loop through days
             for (int i = 0; i < NumberOfDays; i++)
             {
+                var assetValue = MinExpectedAssetValue + random.NextDouble() * (MaxExpectedAssetValue-MinExpectedAssetValue);
                 //loop through trading periods
                 for (int j = 0; j < NumberOfTradingPeriods; j++)
                 {
@@ -63,9 +73,36 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                     //get next action from each agent
                     foreach (var agent in agents)
                     {
+                        if (agent is InformedAgent)
+                        {
+                            agent.ExpectedAssetLiquidationValue = assetValue;
+                        }
+                        else
+                        {
+                            agent.ExpectedAssetLiquidationValue = MinExpectedAssetValue + random.NextDouble() * (MaxExpectedAssetValue-MinExpectedAssetValue);
+                        }
+
+                        agent.ExpectedAssetLiquidationValueOrderRange = MinExpectedAssetValueRange + random.NextDouble() * (MaxExpectedAssetValueRange - MinExpectedAssetValueRange);
+
                         var ordersToCancel = agent.GetOrdersToCancel(i, j);
                         
                         var order = agent.GetNextAction(_limitOrderBookSnapshot, i, j);
+
+                        if (order != null)
+                        {
+                            var r = hub.Invoke<bool>("ProcessOrderInstruction", order, agent.Name);
+                            r.Wait();
+                        }
+                    }
+
+                    System.Console.WriteLine(string.Format("{0} {1} {2} {3}", i,j,_limitOrderBookSnapshot.BestBidPrice,_limitOrderBookSnapshot.BestAskPrice));
+                }
+
+                if (i + 1 % NumberOfDaysInLearningPeriod == 0)
+                {
+                    foreach (var agent in agents)
+                    {
+                        agent.EvolveTimingChromosome();
                     }
                 }
             }            
@@ -95,3 +132,4 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
     }
 }
+

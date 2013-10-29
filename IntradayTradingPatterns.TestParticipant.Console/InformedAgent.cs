@@ -15,7 +15,12 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         public override bool WillTradeInThisPeriod(int day, int tradingPeriod)
         {
-            throw new NotImplementedException();
+            return base._random.Next() % 2 == 0;
+        }
+
+        public override void EvolveTimingChromosome()
+        {
+            
         }
     }
 }
