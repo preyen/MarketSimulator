@@ -83,7 +83,14 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                 }
             }
 
+            order = FilterLimitOrders(order);
+
             return order;
+        }
+
+        public virtual Order FilterLimitOrders(Order order)
+        {
+            return order; 
         }
 
         public abstract bool WillTradeInThisPeriod(int day, int tradingPeriod);

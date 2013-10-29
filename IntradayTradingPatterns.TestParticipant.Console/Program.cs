@@ -26,6 +26,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             double MinExpectedAssetValueRange = 5;
             double MaxExpectedAssetValueRange = 15;
             int NumberOfDaysInLearningPeriod = 15;
+            bool InformedAgentsCompete = true;
 
 
             var random = new Random();
@@ -48,7 +49,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             //init infrormed agents
             for (int i = 0; i < NumberOfInformedAgents; i++)
             {
-                var agent = new InformedAgent(random,100,"Agent" + i);
+                var agent = new InformedAgent(random,100,"Agent" + i,InformedAgentsCompete);
                 agents.Add(agent);
             }
 
