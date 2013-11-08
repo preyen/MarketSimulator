@@ -41,6 +41,11 @@ namespace MarketSimulator.CommunicationsModule
             throw new NotImplementedException();
         }
 
+        public void ClearAllTrades()
+        {
+            OnOrderCancellation();
+        }
+
         public bool PushUpdate(ILimitOrderBook limitOrderBook)
         {
             var orderBookSnapshot = new LimitOrderBookSnapshot();
@@ -60,6 +65,7 @@ namespace MarketSimulator.CommunicationsModule
         }
 
         public event ProcessOrderHandler OnOrder;
+        public event CancelOrdersHandler OnOrderCancellation;
 
         public bool ProcessOrderInstruction(Order order, string userID)
         {
@@ -124,6 +130,11 @@ namespace MarketSimulator.CommunicationsModule
         {
             Console.WriteLine("Ping called");
             Clients.All.pong();
+        }
+
+        public void ClearAllTrades()
+        {
+            _commsHandler.ClearAllTrades();
         }
     }
 

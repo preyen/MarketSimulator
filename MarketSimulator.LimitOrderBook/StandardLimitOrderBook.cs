@@ -37,6 +37,12 @@ namespace MarketSimulator.LimitOrderBook
 ; }
         }
 
+        public void ClearAllOrders()
+        {
+            Bids.Clear();
+            Asks.Clear();
+        }
+
         public IEnumerable<OrderUpdate> ProcessLimitOrder(Order order)
         {
             switch (order.Side)

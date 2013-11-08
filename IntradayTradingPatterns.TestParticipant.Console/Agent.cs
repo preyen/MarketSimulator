@@ -16,6 +16,8 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         private int _maxOrderQuantity;
         private string _name;
 
+        public double CurrentProfit { get; set; }
+
         public string Name
         {
             get { return _name; }
@@ -34,7 +36,8 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         {
             _random = randomNumberGenerator;
             _maxOrderQuantity = maxOrderQuantity;
-            _name = name;               
+            _name = name;
+            CurrentProfit = 0;
         }
 
         public MarketSimulator.Contracts.Order GetNextAction(MarketSimulator.Contracts.LimitOrderBookSnapshot limitOrderBookSnapshot, int day, int tradingPeriod)
@@ -87,7 +90,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             order = FilterLimitOrders(order);
 
             return order;
-        }
+        }        
 
         public virtual Order FilterLimitOrders(Order order)
         {
@@ -103,7 +106,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         }
                
 
-        public abstract void EvolveTimingChromosome();
+        public abstract void EvolveTimingChromosome(List<Agent> agents);
         
     }
 }

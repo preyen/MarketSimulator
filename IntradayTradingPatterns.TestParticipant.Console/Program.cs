@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,8 +18,8 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         {
             System.Threading.Thread.Sleep(1000);
 
-            int NumberOfInformedAgents = 100;
-            int NumberOfUninformedAgents = 100;
+            int NumberOfInformedAgents = 40;
+            int NumberOfUninformedAgents = 160;
             int NumberOfDays = 2250;
             int NumberOfTradingPeriods = 8;
             double MinExpectedAssetValue = 20;
@@ -27,7 +28,9 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             double MaxExpectedAssetValueRange = 15;
             int NumberOfDaysInLearningPeriod = 15;
             bool InformedAgentsCompete = true;
+            int NumberOfAgentsInGroup = 40;
 
+            var geneticSelection = Enumerable.Range(0, NumberOfAgentsInGroup).ToList();
 
             var random = new Random();
 
@@ -93,19 +96,45 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                         {
                             var r = hub.Invoke<bool>("ProcessOrderInstruction", order, agent.Name);
                             r.Wait();
+                            //set agents profit/loss
+                            if (order.Side == OrderSide.Buy)
+                            {
+                                agent.CurrentProfit += (assetValue - order.Price) * order.Quantity;
+                            }
+                            else if (order.Side == OrderSide.Sell)
+                            {
+                                agent.CurrentProfit += (order.Price - assetValue) * order.Quantity;
+                            }
                         }
                     }
 
                     System.Console.WriteLine(string.Format("{0} {1} {2} {3}", i,j,_limitOrderBookSnapshot.BestBidPrice,_limitOrderBookSnapshot.BestAskPrice));
                 }
 
-                if (i + 1 % NumberOfDaysInLearningPeriod == 0)
+                if ((i + 1) % NumberOfDaysInLearningPeriod == 0)
                 {
                     foreach (var agent in agents)
                     {
-                        agent.EvolveTimingChromosome();
+                        geneticSelection.Shuffle();
+
+                        var selectedAgents = new List<Agent>();
+
+                        for (int j = 0; j < geneticSelection.Count; j++)
+                        {
+                            selectedAgents.Add(agents[geneticSelection[j]]);
+                        }
+
+                        agent.EvolveTimingChromosome(selectedAgents);
+                    }
+
+                    foreach (var agent in agents)
+                    {
+                        agent.CurrentProfit = 0;
                     }
                 }
+
+                //clear trading book every day
+                hub.Invoke("ClearAllTrades");
             }            
         }
 

@@ -42,7 +42,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             return timingChromosome[tradingPeriod];
         }
 
-        public override void EvolveTimingChromosome()
+        public override void EvolveTimingChromosome(List<Agent> agents)
         {
             
         }

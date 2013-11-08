@@ -6,6 +6,7 @@ using System.Text;
 namespace MarketSimulator.Contracts
 {
     public delegate void ProcessOrderHandler(Order order, string userID);
+    public delegate void CancelOrdersHandler();
 
     public interface IDataFeed
     {
@@ -17,6 +18,7 @@ namespace MarketSimulator.Contracts
     public interface ITradeInterface
     {      
        event ProcessOrderHandler OnOrder;
+       event CancelOrdersHandler OnOrderCancellation;
 
        bool ProcessOrderInstruction(Order order, string userID);
        bool PushOrderInstructionUpdate(OrderUpdate order, string userID);

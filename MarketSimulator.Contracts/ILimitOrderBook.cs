@@ -18,6 +18,8 @@ namespace MarketSimulator.Contracts
 
       IEnumerable<OrderUpdate> ProcessMarketOrder(Order order);
 
-      IEnumerable<OrderUpdate> CancelOrder(Order order);        
+      IEnumerable<OrderUpdate> CancelOrder(Order order);
+
+      void ClearAllOrders();
     }
 }

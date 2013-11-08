@@ -19,6 +19,12 @@ namespace MarketSimulator
             _orderCommunicationsModule = orderCommunicationsModule;
 
             _orderCommunicationsModule.OnOrder += _orderCommunicationsModule_OnOrder;
+            _orderCommunicationsModule.OnOrderCancellation += _orderCommunicationsModule_OnOrderCancellation;
+        }
+
+        void _orderCommunicationsModule_OnOrderCancellation()
+        {
+            _limitOrderBook.ClearAllOrders();
         }
 
         void _orderCommunicationsModule_OnOrder(Order order, string userID)

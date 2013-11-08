@@ -40,9 +40,9 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         }
 
-        public override void EvolveTimingChromosome()
+        public override void EvolveTimingChromosome(List<Agent> agents)
         {
-            
+                       
         }
     }
 }
