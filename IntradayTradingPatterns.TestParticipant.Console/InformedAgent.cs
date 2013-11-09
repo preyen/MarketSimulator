@@ -10,18 +10,18 @@ namespace IntradayTradingPatterns.TestParticipant.Console
     class InformedAgent : Agent,IAgent
     {
         bool _compete;
-        BitArray timingChromosome;
+        
 
         public InformedAgent(Random randomNumberGenerator, int maxOrderQuantity, string name, bool compete)
             : base(randomNumberGenerator, maxOrderQuantity, name)
         {
             _compete = compete;
 
-            timingChromosome = new BitArray(8);
+            TimingChromosome = new BitArray(8);
 
-            for (int i = 0; i < timingChromosome.Length; i++)
+            for (int i = 0; i < TimingChromosome.Length; i++)
             {
-                timingChromosome[i] = randomNumberGenerator.Next() % 2 == 0;
+                TimingChromosome[i] = randomNumberGenerator.Next() % 2 == 0;
             }
         }
 
@@ -39,12 +39,13 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         public override bool WillTradeInThisPeriod(int day, int tradingPeriod)
         {
-            return timingChromosome[tradingPeriod];
+            return TimingChromosome[tradingPeriod];
         }
 
-        public override void EvolveTimingChromosome(List<Agent> agents)
+        public override void EvolveTimingChromosome(List<Agent> agents, double crossOverProbability, double mutationProbability)
         {
             
+
         }
     }
 }

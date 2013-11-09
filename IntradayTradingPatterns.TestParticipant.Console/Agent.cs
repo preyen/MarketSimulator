@@ -22,13 +22,13 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         {
             get { return _name; }
         }
-        
-        private string _timingChromosome;
 
-        public string TimingChromosome
+        BitArray timingChromosome;
+
+        public BitArray TimingChromosome
         {
-            get { return _timingChromosome; }
-            set { _timingChromosome = value; }
+            get { return timingChromosome; }
+            set { timingChromosome = value; }
         }
 
 
@@ -106,7 +106,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         }
                
 
-        public abstract void EvolveTimingChromosome(List<Agent> agents);
+        public abstract void EvolveTimingChromosome(List<Agent> agents, double crossOverProbability,double mutationProbability);
         
     }
 }

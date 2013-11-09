@@ -29,6 +29,8 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             int NumberOfDaysInLearningPeriod = 15;
             bool InformedAgentsCompete = true;
             int NumberOfAgentsInGroup = 40;
+            double crossOverProbability = 0.7;
+            double mutationProbability = 0.001;
 
             var geneticSelection = Enumerable.Range(0, NumberOfAgentsInGroup).ToList();
 
@@ -123,8 +125,8 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                         {
                             selectedAgents.Add(agents[geneticSelection[j]]);
                         }
-
-                        agent.EvolveTimingChromosome(selectedAgents);
+                        
+                        agent.EvolveTimingChromosome(selectedAgents,crossOverProbability,mutationProbability);
                     }
 
                     foreach (var agent in agents)

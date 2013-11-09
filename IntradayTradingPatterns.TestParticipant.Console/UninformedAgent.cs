@@ -9,22 +9,21 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 {
     class UninformedAgent : Agent,IAgent
     {
-        BitArray timingChromosome;
 
         public UninformedAgent(Random randomNumberGenerator, int maxOrderQuantity, string name)
             : base(randomNumberGenerator, maxOrderQuantity, name)
         {
-            timingChromosome = new BitArray(3);
+            TimingChromosome = new BitArray(3);
 
-            for (int i = 0; i < timingChromosome.Length; i++)
+            for (int i = 0; i < TimingChromosome.Length; i++)
             {
-                timingChromosome[i] = randomNumberGenerator.Next() % 2 == 0;
+                TimingChromosome[i] = randomNumberGenerator.Next() % 2 == 0;
             }
         }
         
         public override bool WillTradeInThisPeriod(int day, int tradingPeriod)
         {
-            return tradingPeriod == getIntFromBitArray(timingChromosome);
+            return tradingPeriod == getIntFromBitArray(TimingChromosome);
         }
 
         //http://stackoverflow.com/questions/5283180/how-i-can-convert-bitarray-to-single-int
@@ -40,9 +39,32 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         }
 
-        public override void EvolveTimingChromosome(List<Agent> agents)
+        public override void EvolveTimingChromosome(List<Agent> agents, double crossOverProbability, double mutationProbability)
         {
-                       
+            if (_random.NextDouble() < crossOverProbability)
+            {
+                //selection
+                var chromosomes =
+                    agents.Select(a => new {a.TimingChromosome, Rank = a.CurrentProfit*_random.NextDouble()});
+                
+                var chosenChromosome = chromosomes.OrderBy(c => c.Rank).First();
+
+                //crossover
+                var crossOver = Math.Floor(_random.NextDouble() * TimingChromosome.Count);
+                
+                for (int i = 0; i < crossOver; i++)
+                {
+                    TimingChromosome[i] = chosenChromosome.TimingChromosome[i];
+                }
+            }
+
+            //mutation
+            for (int i = 0; i < TimingChromosome.Count; i++)
+            {
+                TimingChromosome[i] = _random.NextDouble() < mutationProbability
+                    ? !TimingChromosome[i]
+                    : TimingChromosome[i];
+            }
         }
     }
 }
