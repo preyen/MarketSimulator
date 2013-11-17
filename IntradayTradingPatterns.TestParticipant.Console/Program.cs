@@ -31,7 +31,13 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             int NumberOfAgentsInGroup = 40;
             double crossOverProbability = 0.7;
             double mutationProbability = 0.001;
+            double initialPropensity = 8000;
+            double recency = 0.10;
+            double experimentation = 0.15;
+            double temperature = 30;
 
+            var learningMode = LearningMode.MRE;
+            
             var geneticSelection = Enumerable.Range(0, NumberOfAgentsInGroup).ToList();
 
             var random = new Random();
@@ -51,24 +57,30 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
             var agents = new List<Agent>();
 
+            var allUnInformedTimingChromosomes = GenerateAllTimingChromosomes(3);
+            var allInformedTimingChromosomes = GenerateAllTimingChromosomes(8);
+
             //init infrormed agents
             for (int i = 0; i < NumberOfInformedAgents; i++)
             {
-                var agent = new InformedAgent(random,100,"Agent" + i,InformedAgentsCompete);
+                var agent = new InformedAgent(random,100,"Agent" + i,InformedAgentsCompete, allInformedTimingChromosomes,initialPropensity,recency,experimentation,temperature);
                 agents.Add(agent);
             }
 
             //init uninformed agents
             for (int i = 0; i < NumberOfUninformedAgents; i++)
             {
-                var agent = new UninformedAgent(random, 100, "Agent" + i);
+                var agent = new UninformedAgent(random, 100, "Agent" + i, allUnInformedTimingChromosomes, initialPropensity, recency, experimentation, temperature);
                 agents.Add(agent);
             }
 
+            var informedAgents = agents.Where(a => a is InformedAgent).ToList();
+            var uninformedAgents = agents.Where(a => a is UninformedAgent).ToList();
 
             //loop through days
             for (int i = 0; i < NumberOfDays; i++)
             {
+                System.Console.WriteLine(i);
                 var assetValue = MinExpectedAssetValue + random.NextDouble() * (MaxExpectedAssetValue-MinExpectedAssetValue);
                 //loop through trading periods
                 for (int j = 0; j < NumberOfTradingPeriods; j++)
@@ -110,7 +122,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                         }
                     }
 
-                    System.Console.WriteLine(string.Format("{0} {1} {2} {3}", i,j,_limitOrderBookSnapshot.BestBidPrice,_limitOrderBookSnapshot.BestAskPrice));
+                    //System.Console.WriteLine(string.Format("{0} {1} {2} {3}", i,j,_limitOrderBookSnapshot.BestBidPrice,_limitOrderBookSnapshot.BestAskPrice));
                 }
 
                 if ((i + 1) % NumberOfDaysInLearningPeriod == 0)
@@ -123,21 +135,50 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
                         for (int j = 0; j < geneticSelection.Count; j++)
                         {
-                            selectedAgents.Add(agents[geneticSelection[j]]);
+                            selectedAgents.Add(uninformedAgents[geneticSelection[j]]);
                         }
-                        
-                        agent.EvolveTimingChromosome(selectedAgents,crossOverProbability,mutationProbability);
-                    }
 
-                    foreach (var agent in agents)
-                    {
-                        agent.CurrentProfit = 0;
+                        if (agent is UninformedAgent)
+                        {
+                            agent.EvolveTimingChromosome(learningMode, selectedAgents, crossOverProbability,
+                                mutationProbability);
+                        }
+                        else if (agent is InformedAgent)
+                        {
+                            agent.EvolveTimingChromosome(learningMode,informedAgents,crossOverProbability,mutationProbability);
+                        }
                     }
                 }
 
                 //clear trading book every day
                 hub.Invoke("ClearAllTrades");
             }            
+        }
+
+        private static List<BitArray> GenerateAllTimingChromosomes(int length)
+        {
+            var allPossible = new List<BitArray>();
+
+            for (int i = 0; i < Math.Pow(2,length)-1; i++)
+            {
+                var intArray = new int[] {i};
+                var bitArray = new BitArray(intArray);
+
+                allPossible.Add(bitArray);
+            }
+
+            for (int i = 0; i < allPossible.Count; i++)
+            {
+                var newArray = new bool[length];
+                for (int j = 0; j < length; j++)
+                {
+                    newArray[j] = allPossible[i][j];
+                }
+
+                allPossible[i] = new BitArray(newArray);
+            }
+
+            return allPossible;
         }
 
         private static void UpdateLimitOrderBook(LimitOrderBookSnapshot data)
