@@ -48,9 +48,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
             System.Console.WriteLine("Connected");
 
-            hub.On<LimitOrderBookSnapshot>("Update", data =>
-                UpdateLimitOrderBook(data)
-            );
+            hub.On<LimitOrderBookSnapshot>("Update", UpdateLimitOrderBook);
 
             var subscribeResult = hub.Invoke("SubscribeToDataFeed", "TestDriver");
             subscribeResult.Wait();
