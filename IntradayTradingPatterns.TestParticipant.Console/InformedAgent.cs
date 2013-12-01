@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarketSimulator.Contracts;
 
 namespace IntradayTradingPatterns.TestParticipant.Console
 {
@@ -12,8 +13,8 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         bool _compete;
         
 
-        public InformedAgent(Random randomNumberGenerator, int maxOrderQuantity, string name, bool compete, List<BitArray> allTimingChromosomes, double initialPropensity, double recency, double experimentation, double temperature)
-            : base(randomNumberGenerator, maxOrderQuantity, name,allTimingChromosomes,initialPropensity,recency,experimentation,temperature)
+        public InformedAgent(Random randomNumberGenerator, int maxOrderQuantity, string name, bool compete, List<BitArray> allTimingChromosomes, double initialPropensity, double recency, double experimentation, double temperature, string @group)
+            : base(randomNumberGenerator, maxOrderQuantity, name,allTimingChromosomes,initialPropensity,recency,experimentation,temperature,group)
         {
             _compete = compete;
         }
@@ -22,7 +23,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
         public override MarketSimulator.Contracts.Order FilterLimitOrders(MarketSimulator.Contracts.Order order)
         {
-            if (!_compete)
+            if (order != null && !_compete && order.Type == OrderType.LimitOrder)
             {
                 return null;
             }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Odbc;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MarketSimulator.Contracts;
 using Microsoft.AspNet.SignalR.Client;
@@ -27,7 +30,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             double MinExpectedAssetValueRange = 5;
             double MaxExpectedAssetValueRange = 15;
             int NumberOfDaysInLearningPeriod = 15;
-            bool InformedAgentsCompete = true;
+            bool InformedAgentsCompete = false;
             int NumberOfAgentsInGroup = 40;
             double crossOverProbability = 0.7;
             double mutationProbability = 0.001;
@@ -37,8 +40,6 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             double temperature = 30;
 
             var learningMode = LearningMode.MRE;
-            
-            var geneticSelection = Enumerable.Range(0, NumberOfAgentsInGroup).ToList();
 
             var random = new Random();
 
@@ -49,6 +50,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             System.Console.WriteLine("Connected");
 
             hub.On<LimitOrderBookSnapshot>("Update", UpdateLimitOrderBook);
+            
 
             var subscribeResult = hub.Invoke("SubscribeToDataFeed", "TestDriver");
             subscribeResult.Wait();
@@ -61,45 +63,49 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             //init infrormed agents
             for (int i = 0; i < NumberOfInformedAgents; i++)
             {
-                var agent = new InformedAgent(random,100,"Agent" + i,InformedAgentsCompete, allInformedTimingChromosomes,initialPropensity,recency,experimentation,temperature);
+                var agent = new InformedAgent(random, 100, "InformedAgent" + i, InformedAgentsCompete, allInformedTimingChromosomes, initialPropensity, recency, experimentation, temperature, "informed");
                 agents.Add(agent);
             }
 
             //init uninformed agents
             for (int i = 0; i < NumberOfUninformedAgents; i++)
             {
-                var agent = new UninformedAgent(random, 100, "Agent" + i, allUnInformedTimingChromosomes, initialPropensity, recency, experimentation, temperature);
+                var agent = new UninformedAgent(random, 100, "UninformedAgent" + i, allUnInformedTimingChromosomes, initialPropensity, recency, experimentation, temperature, "uninformed" + i % 4);
                 agents.Add(agent);
             }
 
-            var informedAgents = agents.Where(a => a is InformedAgent).ToList();
-            var uninformedAgents = agents.Where(a => a is UninformedAgent).ToList();
+            var orderUpdater = new OrderUpdater(agents);
+            hub.On<OrderUpdate>("UpdateOrder", orderUpdater.UpdateOrder);
 
+            var volume = new double[NumberOfDays,NumberOfTradingPeriods];
+            
             //loop through days
             for (int i = 0; i < NumberOfDays; i++)
             {
                 System.Console.WriteLine(i);
                 var assetValue = MinExpectedAssetValue + random.NextDouble() * (MaxExpectedAssetValue-MinExpectedAssetValue);
+                orderUpdater.AssetValue = assetValue;
+
+                foreach (var agent in agents)
+                {
+                    if (agent is InformedAgent)
+                    {
+                        agent.ExpectedAssetLiquidationValue = assetValue;
+                    }
+                    else
+                    {
+                        agent.ExpectedAssetLiquidationValue = MinExpectedAssetValue + random.NextDouble() * (MaxExpectedAssetValue - MinExpectedAssetValue);
+                    }
+
+                    agent.ExpectedAssetLiquidationValueOrderRange = MinExpectedAssetValueRange + random.NextDouble() * (MaxExpectedAssetValueRange - MinExpectedAssetValueRange);
+                }
+
                 //loop through trading periods
                 for (int j = 0; j < NumberOfTradingPeriods; j++)
                 {
-                    //shuffle agents
-                    agents.Shuffle();
-
                     //get next action from each agent
                     foreach (var agent in agents)
                     {
-                        if (agent is InformedAgent)
-                        {
-                            agent.ExpectedAssetLiquidationValue = assetValue;
-                        }
-                        else
-                        {
-                            agent.ExpectedAssetLiquidationValue = MinExpectedAssetValue + random.NextDouble() * (MaxExpectedAssetValue-MinExpectedAssetValue);
-                        }
-
-                        agent.ExpectedAssetLiquidationValueOrderRange = MinExpectedAssetValueRange + random.NextDouble() * (MaxExpectedAssetValueRange - MinExpectedAssetValueRange);
-
                         var ordersToCancel = agent.GetOrdersToCancel(i, j);
                         
                         var order = agent.GetNextAction(_limitOrderBookSnapshot, i, j);
@@ -109,49 +115,85 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                             var r = hub.Invoke<bool>("ProcessOrderInstruction", order, agent.Name);
                             r.Wait();
                             //set agents profit/loss
-                            if (order.Side == OrderSide.Buy)
+                            if (order.Type == OrderType.MarketOrder)
                             {
-                                agent.CurrentProfit += (assetValue - order.Price) * order.Quantity;
-                            }
-                            else if (order.Side == OrderSide.Sell)
-                            {
-                                agent.CurrentProfit += (order.Price - assetValue) * order.Quantity;
+                                if (order.Side == OrderSide.Buy)
+                                {
+                                    agent.CurrentProfit += (assetValue - order.Price) * order.Quantity;
+                                }
+                                else if (order.Side == OrderSide.Sell)
+                                {
+                                    agent.CurrentProfit += (order.Price - assetValue) * order.Quantity;
+                                }
+
+                                volume[i, j] += order.Quantity;
                             }
                         }
                     }
 
-                    //System.Console.WriteLine(string.Format("{0} {1} {2} {3}", i,j,_limitOrderBookSnapshot.BestBidPrice,_limitOrderBookSnapshot.BestAskPrice));
+                    //shuffle agents
+                    agents.Shuffle();
                 }
 
                 if ((i + 1) % NumberOfDaysInLearningPeriod == 0)
                 {
-                    foreach (var agent in agents)
+                    var agentByGroup = agents.GroupBy(a => a.Group);
+
+                    var groups = new Dictionary<string,Dictionary<BitArray, double>>();
+
+                    foreach (var group in agentByGroup)
                     {
-                        geneticSelection.Shuffle();
-
-                        var selectedAgents = new List<Agent>();
-
-                        for (int j = 0; j < geneticSelection.Count; j++)
+                        if (!groups.ContainsKey(group.Key))
                         {
-                            selectedAgents.Add(uninformedAgents[geneticSelection[j]]);
+                            groups.Add(group.Key, new Dictionary<BitArray, double>());
                         }
 
+                        foreach (var agent in group)
+                        {
+                            if (!groups[group.Key].ContainsKey(agent.TimingChromosome))
+                            {
+                                groups[group.Key].Add(agent.TimingChromosome,agent.CurrentProfit);
+                            }
+                            else
+                            {
+                                groups[group.Key][agent.TimingChromosome] += agent.CurrentProfit;
+                            }
+                        }
+                    }
+
+                    foreach (var agent in agents)
+                    {
                         if (agent is UninformedAgent)
                         {
-                            agent.EvolveTimingChromosome(learningMode, selectedAgents, crossOverProbability,
+                            agent.EvolveTimingChromosome(learningMode, groups[agent.Group], crossOverProbability,
                                 mutationProbability);
                         }
                         else if (agent is InformedAgent)
                         {
-                            agent.EvolveTimingChromosome(learningMode,informedAgents,crossOverProbability,mutationProbability);
+                            agent.EvolveTimingChromosome(learningMode, groups[agent.Group], crossOverProbability, mutationProbability);
                         }
                     }
+
+                    
                 }
 
                 //clear trading book every day
-                hub.Invoke("ClearAllTrades");
-            }            
+                var result = hub.Invoke("ClearAllTrades");
+                result.Wait();
+            }
         }
+
+        private static string GetKey(BitArray timingChromosome)
+        {
+            var key = "";
+
+            for (int i = 0; i < timingChromosome.Count; i++)
+            {
+                key += timingChromosome[i] ? "1" : "0";
+            }
+            return key;
+        }
+
 
         private static List<BitArray> GenerateAllTimingChromosomes(int length)
         {
@@ -201,6 +243,41 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             }
         }
 
+    }
+
+    public class OrderUpdater
+    {
+        private readonly List<Agent> _agents;
+        public double AssetValue { get; set; }
+
+        public OrderUpdater(List<Agent> agents)
+        {
+            _agents = agents;
+        }
+
+        public void UpdateOrder(OrderUpdate order)
+        {
+            if (order.Matches != null && order.Matches.Count > 0 && order.Order.Type == OrderType.LimitOrder)
+            {
+                var agentInvolved = _agents.Where(a => a.Name == order.Order.UserID).First();
+
+                if (order.Order.Side == OrderSide.Buy)
+                {
+                    foreach (var match in order.Matches)
+                    {
+                        agentInvolved.CurrentProfit += (AssetValue - order.Order.Price) * match.Quantity;
+                    }
+                    
+                }
+                else if (order.Order.Side == OrderSide.Sell)
+                {
+                    foreach (var match in order.Matches)
+                    {
+                        agentInvolved.CurrentProfit += (order.Order.Price - AssetValue)* match.Quantity;
+                    }
+                }
+            }
+        } 
     }
 }
 

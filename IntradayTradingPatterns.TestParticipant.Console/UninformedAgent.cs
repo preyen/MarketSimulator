@@ -10,12 +10,10 @@ namespace IntradayTradingPatterns.TestParticipant.Console
     class UninformedAgent : Agent,IAgent
     {
 
-        public UninformedAgent(Random randomNumberGenerator, int maxOrderQuantity, string name,
-            List<BitArray> allTimingChromosomes, double initialPropensity, double recency, double experimentation,
-            double temperature)
+        public UninformedAgent(Random randomNumberGenerator, int maxOrderQuantity, string name, List<BitArray> allTimingChromosomes, double initialPropensity, double recency, double experimentation, double temperature, string group)
             : base(
                 randomNumberGenerator, maxOrderQuantity, name, allTimingChromosomes, initialPropensity, recency,
-                experimentation, temperature)
+                experimentation, temperature,group)
         {
 
         }

@@ -19,6 +19,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         private readonly double _recency;
         private readonly double _experimentation;
         private readonly double _temperature;
+        private readonly string _group;
 
         public double CurrentProfit { get; set; }
 
@@ -35,10 +36,15 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             set { timingChromosome = value; }
         }
 
+        public string Group
+        {
+            get { return _group; }
+        }
+
         private List<ChromosomeLearning> _learningLog;
 
         public Agent(Random randomNumberGenerator, int maxOrderQuantity, string name,IReadOnlyCollection<BitArray> allTimingChromosomes, double initialPropensity, double recency, double experimentation,
-            double temperature)
+            double temperature, string group)
         {
             _random = randomNumberGenerator;
             _maxOrderQuantity = maxOrderQuantity;
@@ -47,6 +53,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
             _recency = recency;
             _experimentation = experimentation;
             _temperature = temperature;
+            _group = @group;
 
             CurrentProfit = 0;
 
@@ -64,8 +71,6 @@ namespace IntradayTradingPatterns.TestParticipant.Console
 
             TimingChromosome = _learningLog.OrderBy(l => l.Probability*_random.NextDouble()).First().TimingChromosome;
             
-            // Above is more generic
-            // _learningLog[(int) Math.Floor(_learningLog.Count*_random.NextDouble())].TimingChromosome;
         }
 
         public MarketSimulator.Contracts.Order GetNextAction(MarketSimulator.Contracts.LimitOrderBookSnapshot limitOrderBookSnapshot, int day, int tradingPeriod)
@@ -142,7 +147,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
         }
 
 
-        public virtual void EvolveTimingChromosome(LearningMode learningMode, List<Agent> agents,
+        public virtual void EvolveTimingChromosome(LearningMode learningMode, Dictionary<BitArray,double> agents,
             double crossOverProbability, double mutationProbability)
         {
             switch (learningMode)
@@ -155,16 +160,17 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                     {
                         //selection
                         var chromosomes =
-                            agents.Select(a => new {a.TimingChromosome, Rank = a.CurrentProfit*_random.NextDouble()});
+                            agents.Select(a => new {a.Key, Rank = a.Value*_random.NextDouble()});
 
-                        var chosenChromosome = chromosomes.OrderBy(c => c.Rank).First();
+                        var chosenChromosome = chromosomes.OrderByDescending(c => c.Rank).First();
 
                         //crossover
+
                         var crossOver = Math.Floor(_random.NextDouble()*TimingChromosome.Count);
 
                         for (int i = 0; i < crossOver; i++)
                         {
-                            TimingChromosome[i] = chosenChromosome.TimingChromosome[i];
+                            TimingChromosome[i] = chosenChromosome.Key[i];
                         }
                     }
 
@@ -176,6 +182,7 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                             : TimingChromosome[i];
                     }
                     break;
+
                 case LearningMode.MRE:
                     //update propensities
                     for (int i = 0; i < _learningLog.Count; i++)
@@ -202,8 +209,9 @@ namespace IntradayTradingPatterns.TestParticipant.Console
                     }
 
                     //select chromosome
-                    TimingChromosome = _learningLog.OrderBy(l => l.Probability * _random.NextDouble()).First().TimingChromosome;
+                    TimingChromosome = _learningLog.OrderByDescending(l => l.Probability * _random.NextDouble()).First().TimingChromosome;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("Unknown learning mode");
             }
