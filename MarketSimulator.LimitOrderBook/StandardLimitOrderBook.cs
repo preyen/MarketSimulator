@@ -12,6 +12,8 @@ namespace MarketSimulator.LimitOrderBook
         {
             Bids = new SortedList<double, Queue<Order>>();
             Asks = new SortedList<double, Queue<Order>>();
+            StopAsks = new SortedList<double, Queue<Order>>();
+            StopBids = new SortedList<double, Queue<Order>>();
         }
 
         public SortedList<double, Queue<Order>> Bids
@@ -21,6 +23,17 @@ namespace MarketSimulator.LimitOrderBook
         }
 
         public SortedList<double, Queue<Order>> Asks
+        {
+            get;
+            private set;
+        }
+
+        public SortedList<double,Queue<Order>> StopAsks
+        {
+            get;
+            private set;
+        }
+        public SortedList<double, Queue<Order>> StopBids
         {
             get;
             private set;
@@ -43,22 +56,104 @@ namespace MarketSimulator.LimitOrderBook
             Asks.Clear();
         }
 
-        public IEnumerable<OrderUpdate> ProcessLimitOrder(Order order)
+        public IEnumerable<OrderUpdate> ProcessLimitOrder(Order order,bool checkStopOrders)
         {
+            var results = new List<OrderUpdate>();
+
             switch (order.Side)
             {
                 case OrderSide.Buy:
-                    return ProcessBuyLimitOrder(order);
+                    results.AddRange(ProcessBuyLimitOrder(order));
+                    break;
                 case OrderSide.Sell:
-                    return ProcessSellLimitOrder(order);
+                    results.AddRange(ProcessSellLimitOrder(order));
+                    break;
                 default:
-                    return new[] {new OrderUpdate()
+                    results.Add(new OrderUpdate()
                     {
                         Placed = false,
                         Order = order,
                         Message = "Order side not known"
-                    }};
+                    });
+                    break;
             }
+
+            if (checkStopOrders)
+                results.AddRange(ClearStopOrders());
+
+            return results;
+        }
+
+        private IEnumerable<OrderUpdate> ClearStopOrders()
+        {
+            var results = new List<OrderUpdate>();
+
+            var bidsToRemove = new List<double>();
+            var asksToRemove = new List<double>();
+
+            //clear asks (sells)
+            if (BestBid != null && StopAsks.Where(a => a.Key <= BestBid.Price).Any())
+            {
+                foreach (var stopAskQueue in StopAsks)
+                {
+                    if (stopAskQueue.Key <= BestBid.Price)
+                    {
+                        foreach (var stopAsk in stopAskQueue.Value)
+                        {
+                            switch (stopAsk.Type)
+                            {                                
+                                case OrderType.StopLimitOrder:
+                                    results.AddRange(ProcessLimitOrder(stopAsk,true));
+                                    break;
+                                case OrderType.StopMarketOrder:
+                                    results.AddRange(ProcessMarketOrder(stopAsk,true));
+                                    break;                             
+                                default:
+                                    break;
+                            }
+                        }
+                        asksToRemove.Add(stopAskQueue.Key);
+                    }
+                }
+            }
+
+            //clear bids (buys)
+            if (BestAsk != null && StopBids.Where(a => a.Key >= BestAsk.Price).Any())
+            {
+                foreach (var stopBidQueue in StopBids)
+                {
+                    if (stopBidQueue.Key >= BestAsk.Price)
+                    {
+                        foreach (var stopBid in stopBidQueue.Value)
+                        {
+                            switch (stopBid.Type)
+                            {
+                                case OrderType.StopLimitOrder:
+                                    results.AddRange(ProcessLimitOrder(stopBid,true));
+                                    break;
+                                case OrderType.StopMarketOrder:
+                                    results.AddRange(ProcessMarketOrder(stopBid,true));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        bidsToRemove.Add(stopBidQueue.Key);
+                    }
+                }
+            }
+
+            foreach (var ask in asksToRemove)
+            {
+                StopAsks.Remove(ask);
+            }
+
+            foreach (var bid in bidsToRemove)
+            {
+                StopBids.Remove(bid);
+            }
+
+            return results;
         }
 
         private IEnumerable<OrderUpdate> ProcessSellLimitOrder(Order order)
@@ -144,7 +239,7 @@ namespace MarketSimulator.LimitOrderBook
                                 Bids.Remove(bid.Price);
                             }
 
-                            return ProcessLimitOrder(order);
+                            return ProcessLimitOrder(order,true);
                         }
                         else
                         {
@@ -186,7 +281,7 @@ namespace MarketSimulator.LimitOrderBook
                                 remove = true;
                                 Asks.Remove(ask.Price);
                             }
-                            return ProcessLimitOrder(order);
+                            return ProcessLimitOrder(order,true);
                         }
                         else
                         {
@@ -205,22 +300,32 @@ namespace MarketSimulator.LimitOrderBook
             }};
         }
 
-        public IEnumerable<OrderUpdate> ProcessMarketOrder(Order order)
+        public IEnumerable<OrderUpdate> ProcessMarketOrder(Order order, bool checkStopOrders)
         {
+            var results = new List<OrderUpdate>();
+
             switch (order.Side)
             {
                 case OrderSide.Buy:
-                    return ProcessBuyMarketOrder(order);
+                    results.AddRange(ProcessBuyMarketOrder(order));
+                    break;
                 case OrderSide.Sell:
-                    return ProcessSellMarketOrder(order);
+                    results.AddRange(ProcessSellMarketOrder(order));
+                    break;
                 default:
-                    return new[] {new OrderUpdate()
+                    results.Add(new OrderUpdate()
                     {
                         Placed = false,
                         Order = order,
                         Message = "Order side not known"
-                    }};
+                    });
+                    break;
             }
+
+            if (checkStopOrders)
+                results.AddRange(ClearStopOrders());
+
+            return results;
         }
 
         private IEnumerable<OrderUpdate> ProcessSellMarketOrder(Order order)
@@ -378,6 +483,67 @@ namespace MarketSimulator.LimitOrderBook
         public IEnumerable<OrderUpdate> CancelOrder(Order order)
         {
             return AmendLimitOrder(order, true);            
+        }
+
+
+        public IEnumerable<OrderUpdate> ProcessStopOrder(Order order)
+        {
+            switch (order.Side)
+            {
+                case OrderSide.Buy:
+                    if (BestAsk != null && BestAsk.Price <= order.StopPrice)
+                    {
+                        switch (order.Type)
+                        {
+                            case OrderType.StopLimitOrder:
+                                return ProcessLimitOrder(order,true);
+                            case OrderType.StopMarketOrder:
+                                return ProcessMarketOrder(order,true);
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (!StopBids.ContainsKey(order.StopPrice.Value))
+                        {
+                            StopBids.Add(order.StopPrice.Value, new Queue<Order>());
+                        }
+                        StopBids[order.StopPrice.Value].Enqueue(order);
+                    }
+                    break;
+                case OrderSide.Sell:
+                    if (BestBid != null && BestBid.Price >= order.StopPrice)
+                    {
+                        switch (order.Type)
+                        {
+                            case OrderType.StopLimitOrder:
+                                return ProcessLimitOrder(order,true);
+                            case OrderType.StopMarketOrder:
+                                return ProcessMarketOrder(order,true);
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (!StopBids.ContainsKey(order.StopPrice.Value))
+                        {
+                            StopBids.Add(order.StopPrice.Value, new Queue<Order>());
+                        }
+                        StopBids[order.StopPrice.Value].Enqueue(order);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            return new OrderUpdate[] { new OrderUpdate() {
+                Placed = true,
+                Order = order,
+                Message = "Stop order enqueued"
+            }};
+
         }
     }
 }

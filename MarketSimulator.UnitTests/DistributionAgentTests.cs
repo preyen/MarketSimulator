@@ -12,10 +12,10 @@ using System.IO;
 
 namespace TestParticipant.Console
 {
-    [TestClass]
+   // [TestClass]
     public class DistributionAgentTests
     {
-        [TestMethod]
+     //   [TestMethod]
         public void GetPriceDistribution()
         {
             var lob = new LimitOrderBookSnapshot();

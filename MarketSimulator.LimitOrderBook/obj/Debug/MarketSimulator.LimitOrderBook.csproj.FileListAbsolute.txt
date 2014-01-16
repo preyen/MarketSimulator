@@ -5,3 +5,10 @@ C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimu
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\obj\Debug\MarketSimulator.LimitOrderBook.csprojResolveAssemblyReference.cache
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\obj\Debug\MarketSimulator.LimitOrderBook.dll
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\obj\Debug\MarketSimulator.LimitOrderBook.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\obj\Debug\MarketSimulator.LimitOrderBook.csprojResolveAssemblyReference.cache
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\obj\Debug\MarketSimulator.LimitOrderBook.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\obj\Debug\MarketSimulator.LimitOrderBook.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\bin\Debug\MarketSimulator.LimitOrderBook.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\bin\Debug\MarketSimulator.LimitOrderBook.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\bin\Debug\MarketSimulator.Contracts.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\MarketSimulator.LimitOrderBook\bin\Debug\MarketSimulator.Contracts.pdb

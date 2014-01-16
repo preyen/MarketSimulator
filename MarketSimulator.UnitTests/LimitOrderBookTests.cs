@@ -31,7 +31,7 @@ namespace MarketSimulator.UnitTests
             var testOrder = new Order() { Price = 100, Quantity = 10, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "Test" };
             var testOrderGuid = testOrder.ID.ToString();
 
-            var result = lob.ProcessLimitOrder(testOrder);
+            var result = lob.ProcessLimitOrder(testOrder,true);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
@@ -58,7 +58,7 @@ namespace MarketSimulator.UnitTests
             var testOrder = new Order() { Price = 100, Quantity = 10, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };
             var testOrderGuid = testOrder.ID.ToString();
 
-            var result = lob.ProcessLimitOrder(testOrder);
+            var result = lob.ProcessLimitOrder(testOrder,true);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count());
@@ -189,57 +189,57 @@ namespace MarketSimulator.UnitTests
             Assert.IsInstanceOfType(lob, typeof(ILimitOrderBook));
 
             var setupOrder = new Order() { Price = 101, Quantity = 20, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };           
-            var result = lob.ProcessLimitOrder(setupOrder);
+            var result = lob.ProcessLimitOrder(setupOrder,true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 101, Quantity = 10, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 103, Quantity = 30, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 104, Quantity = 15, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 104, Quantity = 5, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 105, Quantity = 50, Side = OrderSide.Sell, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 94, Quantity = 30, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 96, Quantity = 50, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 97, Quantity = 40, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 97, Quantity = 10, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
             setupOrder = new Order() { Price = 97, Quantity = 10, Side = OrderSide.Buy, Type = OrderType.LimitOrder, UserID = "Test" };
-            result = lob.ProcessLimitOrder(setupOrder);
+            result = lob.ProcessLimitOrder(setupOrder, true);
             Assert.AreEqual(1, result.Count());
             Assert.AreEqual(true, result.First().Placed);
 
@@ -253,7 +253,7 @@ namespace MarketSimulator.UnitTests
                 UserID = "Test2"
             };
 
-            var testResult = lob.ProcessMarketOrder(marketOrder);
+            var testResult = lob.ProcessMarketOrder(marketOrder, true);
 
             Assert.AreEqual(1, result.Count());           
 

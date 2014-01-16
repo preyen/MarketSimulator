@@ -13,13 +13,15 @@ namespace MarketSimulator.Contracts
        Order BestBid { get; }
        Order BestAsk { get; }
 
-      IEnumerable<OrderUpdate> ProcessLimitOrder(Order order);
+      IEnumerable<OrderUpdate> ProcessLimitOrder(Order order, bool checkStopOrders);
       IEnumerable<OrderUpdate> AmendLimitOrder(Order order);
 
-      IEnumerable<OrderUpdate> ProcessMarketOrder(Order order);
+      IEnumerable<OrderUpdate> ProcessMarketOrder(Order order, bool checkStopOrders);
 
       IEnumerable<OrderUpdate> CancelOrder(Order order);
 
       void ClearAllOrders();
+
+      IEnumerable<OrderUpdate> ProcessStopOrder(Order order);
     }
 }

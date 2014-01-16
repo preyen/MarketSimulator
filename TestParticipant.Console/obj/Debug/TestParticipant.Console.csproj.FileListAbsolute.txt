@@ -18,3 +18,23 @@ C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestPartic
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipant.Console\obj\Debug\TestParticipant.Console.csprojResolveAssemblyReference.cache
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipant.Console\obj\Debug\TestParticipant.Console.exe
 C:\Users\Preyen\Documents\Visual Studio 2010\Projects\MarketSimulator\TestParticipant.Console\obj\Debug\TestParticipant.Console.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\TestParticipant.Console.exe.config
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\TestParticipant.Console.exe
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\TestParticipant.Console.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MarketSimulator.Contracts.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MarketSimulator.LimitOrderBook.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MathNet.Numerics.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MathNet.Numerics.IO.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\Microsoft.AspNet.SignalR.Client.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MarketSimulator.Contracts.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MarketSimulator.LimitOrderBook.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MathNet.Numerics.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MathNet.Numerics.xml
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MathNet.Numerics.IO.pdb
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\MathNet.Numerics.IO.xml
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\Microsoft.AspNet.SignalR.Client.xml
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\obj\Debug\TestParticipant.Console.csprojResolveAssemblyReference.cache
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\obj\Debug\TestParticipant.Console.exe
+C:\Users\Preyen Nair\Documents\Visual Studio 2012\Projects\MarketSimulator\TestParticipant.Console\obj\Debug\TestParticipant.Console.pdb

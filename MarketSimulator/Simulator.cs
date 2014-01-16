@@ -34,14 +34,16 @@ namespace MarketSimulator
             switch (order.Type)
             {
                 case OrderType.LimitOrder:
-                    orderUpdates =_limitOrderBook.ProcessLimitOrder(order);
+                    orderUpdates =_limitOrderBook.ProcessLimitOrder(order,true);
                     break;
                 case OrderType.MarketOrder:
-                    orderUpdates = _limitOrderBook.ProcessMarketOrder(order);
+                    orderUpdates = _limitOrderBook.ProcessMarketOrder(order,true);
                     break;
                 case OrderType.StopLimitOrder:
+                    orderUpdates = _limitOrderBook.ProcessStopOrder(order);
                     break;
                 case OrderType.StopMarketOrder:
+                    orderUpdates = _limitOrderBook.ProcessStopOrder(order);
                     break;
                 case OrderType.Cancel:
                     orderUpdates = _limitOrderBook.CancelOrder(order);
